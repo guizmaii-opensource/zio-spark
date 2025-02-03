@@ -309,11 +309,6 @@ lazy val commonSettings =
     scalacOptions ~= fatalWarningsAsProperties
   )
 
-// run is forcing the exit of sbt. It could be useful to set fork to true
-/* however, the base directory of the fork is set to the subproject root (./examples/simple-app) instead of the project
- * root (./) */
-/* which lead to errors, eg. Path does not exist:
- * file:./zio-spark/examples/simple-app/examples/simple-app/src/main/resources/data.csv */
 lazy val noPublishingSettings =
   Seq(
     publish / skip                         := true,
