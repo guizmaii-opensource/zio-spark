@@ -1,4 +1,3 @@
-
 // Common configuration
 inThisBuild(
   List(
@@ -52,8 +51,9 @@ inThisBuild(
 Global / onChangedBuildSource := ReloadOnSourceChanges
 
 // Scalafix configuration
-ThisBuild / semanticdbEnabled          := true
-ThisBuild / semanticdbVersion          := scalafixSemanticdb.revision
+ThisBuild / semanticdbEnabled := true
+ThisBuild / semanticdbVersion := scalafixSemanticdb.revision
+ThisBuild / scalafixDependencies ++= Seq("com.github.vovapolu" %% "scaluzzi" % "0.1.23")
 
 // SCoverage configuration
 val excludedPackages: Seq[String] =
