@@ -134,7 +134,10 @@ lazy val coreTests =
         "dev.zio" %% "zio"          % zio,
         "dev.zio" %% "zio-test"     % zio % Test,
         "dev.zio" %% "zio-test-sbt" % zio % Test
-      ) ++ generateSparkLibraryDependencies(scalaMajorVersion.value, scalaMinorVersion.value)
+      ) ++ generateSparkLibraryDependencies(scalaMajorVersion.value, scalaMinorVersion.value),
+      Test / javaOptions ++= Seq("--add-exports", "java.base/sun.nio.ch=ALL-UNNAMED"),
+      Test / javaOptions ++= Seq("--add-opens", "java.base/java.nio=ALL-UNNAMED"),
+      Test / fork := true, // Needed otherwise the javaOptions are not taken into account
     )
     .dependsOn(core, test)
 
