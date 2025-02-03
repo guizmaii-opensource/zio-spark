@@ -8,6 +8,8 @@ import zio.spark.sql.implicits._
 import java.nio.file.Paths
 
 object Fixture {
+  import scala3encoders.given // scalafix:ok
+
   final case class Person(name: String, age: Long)
 
   def readCsv(path: String): SIO[DataFrame] = SparkSession.read.inferSchema.withHeader.withDelimiter(";").csv(path)
