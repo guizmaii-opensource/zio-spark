@@ -58,7 +58,9 @@ ThisBuild / scalafixDependencies ++= Seq("com.github.vovapolu" %% "scaluzzi" % "
 // Java 17+ stuff
 ThisBuild / Test / javaOptions ++= Seq("--add-exports", "java.base/sun.nio.ch=ALL-UNNAMED")
 ThisBuild / Test / javaOptions ++= Seq("--add-opens", "java.base/java.nio=ALL-UNNAMED")
-ThisBuild / Test / javaOptions ++= Seq("--add-opens", "java.base/java.lang.invoke=ALL-UNNAMED") // See https://github.com/EsotericSoftware/kryo/issues/885
+ThisBuild / Test / javaOptions ++= Seq("--add-opens", "java.base/java.util=ALL-UNNAMED")
+ThisBuild / Test / javaOptions ++= Seq("--add-opens", "java.base/java.lang=ALL-UNNAMED")
+ThisBuild / Test / javaOptions ++= Seq("--add-opens", "java.base/java.lang.invoke=ALL-UNNAMED")
 ThisBuild / Test / fork := true // Needed otherwise the javaOptions are not taken into account
 
 // SCoverage configuration
