@@ -55,6 +55,11 @@ ThisBuild / semanticdbEnabled := true
 ThisBuild / semanticdbVersion := scalafixSemanticdb.revision
 ThisBuild / scalafixDependencies ++= Seq("com.github.vovapolu" %% "scaluzzi" % "0.1.23")
 
+// Java 17+ stuff
+ThisBuild / Test / javaOptions ++= Seq("--add-exports", "java.base/sun.nio.ch=ALL-UNNAMED")
+ThisBuild / Test / javaOptions ++= Seq("--add-opens", "java.base/java.nio=ALL-UNNAMED")
+ThisBuild / Test / fork := true // Needed otherwise the javaOptions are not taken into account
+
 // SCoverage configuration
 val excludedPackages: Seq[String] =
   Seq(
@@ -134,10 +139,7 @@ lazy val coreTests =
         "dev.zio" %% "zio"          % zio,
         "dev.zio" %% "zio-test"     % zio % Test,
         "dev.zio" %% "zio-test-sbt" % zio % Test
-      ) ++ generateSparkLibraryDependencies(scalaMajorVersion.value, scalaMinorVersion.value),
-      Test / javaOptions ++= Seq("--add-exports", "java.base/sun.nio.ch=ALL-UNNAMED"),
-      Test / javaOptions ++= Seq("--add-opens", "java.base/java.nio=ALL-UNNAMED"),
-      Test / fork := true, // Needed otherwise the javaOptions are not taken into account
+      ) ++ generateSparkLibraryDependencies(scalaMajorVersion.value, scalaMinorVersion.value)
     )
     .dependsOn(core, test)
 
@@ -314,7 +316,6 @@ lazy val commonSettings =
  * file:./zio-spark/examples/simple-app/examples/simple-app/src/main/resources/data.csv */
 lazy val noPublishingSettings =
   Seq(
-    fork                                   := false,
     publish / skip                         := true,
     Compile / doc / sources                := Seq.empty,
     Compile / packageDoc / publishArtifact := false
