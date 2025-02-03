@@ -13,7 +13,7 @@ object Fixture {
   def readCsv(path: String): SIO[DataFrame] = SparkSession.read.inferSchema.withHeader.withDelimiter(";").csv(path)
 
   def resourcesPath(fileName: String): String =
-    Paths.get(this.getClass.getClassLoader.getResource(fileName).toURI).toAbsolutePath.toString
+    Paths.get(this.getClass.getClassLoader.getResource(fileName).toURI).toAbsolutePath.toString // scalafix:ok
 
   val targetsPath: String = "zio-spark-core-tests/target/test"
 
