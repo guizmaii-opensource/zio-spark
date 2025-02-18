@@ -61,7 +61,7 @@ case object DatasetTemplate extends Template.Default {
 
   override def implicits(scalaVersion: ScalaBinaryVersion): Option[String] =
     Some {
-      s"""private implicit def lift[U](x:Underlying$name[U]):$name[U] = 
+      s"""private implicit def lift[U](x:Underlying$name[U]):$name[U] =
          |  $name(x)
          |private implicit def iteratorConversion[U](iterator: java.util.Iterator[U]):Iterator[U] =
          |  iterator.asScala

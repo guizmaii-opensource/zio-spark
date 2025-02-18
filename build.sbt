@@ -266,20 +266,18 @@ def crossScalaVersionSources(scalaVersion: String, environment: String, baseDir:
 
 lazy val crossScalaVersionSettings =
   Seq(
-    Compile / unmanagedSourceDirectories ++= {
+    Compile / unmanagedSourceDirectories ++=
       crossScalaVersionSources(
         scalaVersion.value,
         "main",
         baseDirectory.value
-      )
-    },
-    Test / unmanagedSourceDirectories ++= {
+      ),
+    Test / unmanagedSourceDirectories ++=
       crossScalaVersionSources(
         scalaVersion.value,
         "test",
         baseDirectory.value
       )
-    }
   )
 
 lazy val commonSettings =

@@ -13,7 +13,7 @@ case object DataFrameNaFunctionsTemplate extends Template.Default {
   override def imports(scalaVersion: ScalaBinaryVersion): Option[String] =
     Some {
       """import org.apache.spark.sql.{
-        | Dataset => UnderlyingDataset, 
+        | Dataset => UnderlyingDataset,
         | DataFrameNaFunctions => UnderlyingDataFrameNaFunctions
         |}""".stripMargin
     }

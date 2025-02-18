@@ -13,7 +13,7 @@ case object DataFrameStatFunctionsTemplate extends Template.Default {
     Some {
       """import org.apache.spark.sql.{
         |  Column,
-        |  Dataset => UnderlyingDataset, 
+        |  Dataset => UnderlyingDataset,
         |  DataFrameStatFunctions => UnderlyingDataFrameStatFunctions
         |}
         |import org.apache.spark.util.sketch.{BloomFilter, CountMinSketch}
