@@ -188,9 +188,7 @@ object Application {
 final case class Arguments(
     databaseUsername: String,
     sparkConfig:      String
-    /**
-     * **
-     */
+    /** ** */
     ,
     credentials: Credentials
 )

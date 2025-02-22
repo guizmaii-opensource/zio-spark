@@ -435,9 +435,7 @@ final case class RDD[T](underlying: UnderlyingRDD[T]) { self =>
    */
   def barrier(implicit trace: Trace): Task[RDDBarrier[T]] = action(_.barrier())
 
-  /**
-   * Persist this RDD with the default storage level (`MEMORY_ONLY`).
-   */
+  /** Persist this RDD with the default storage level (`MEMORY_ONLY`). */
   def cache(implicit trace: Trace): Task[RDD[T]] = action(_.cache())
 
   /**
@@ -509,9 +507,7 @@ final case class RDD[T](underlying: UnderlyingRDD[T]) { self =>
    */
   def persist(newLevel: => StorageLevel)(implicit trace: Trace): Task[RDD[T]] = action(_.persist(newLevel))
 
-  /**
-   * Persist this RDD with the default storage level (`MEMORY_ONLY`).
-   */
+  /** Persist this RDD with the default storage level (`MEMORY_ONLY`). */
   def persist(implicit trace: Trace): Task[RDD[T]] = action(_.persist())
 
   /**

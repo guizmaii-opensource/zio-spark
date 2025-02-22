@@ -27,9 +27,7 @@ final case class DataFrameStatFunctions(underlying: UnderlyingDataFrameStatFunct
   def unpackWithAnalysis[U](f: UnderlyingDataFrameStatFunctions => UnderlyingDataset[U]): TryAnalysis[Dataset[U]] =
     TryAnalysis(unpack(f))
 
-  /**
-   * Applies a transformation to the underlying DataFrameStatFunctions.
-   */
+  /** Applies a transformation to the underlying DataFrameStatFunctions. */
   def transformation(f: UnderlyingDataFrameStatFunctions => UnderlyingDataFrameStatFunctions): DataFrameStatFunctions =
     DataFrameStatFunctions(f(underlying))
 

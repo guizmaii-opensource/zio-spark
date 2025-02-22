@@ -4,9 +4,7 @@ import zio.spark.rdd._
 
 import scala.collection.Map
 
-/**
- * Handmade functions for SparkContext shared for all Scala versions.
- */
+/** Handmade functions for SparkContext shared for all Scala versions. */
 class SparkContextOverlaySpecific(self: SparkContext) {
 
   // template:on
