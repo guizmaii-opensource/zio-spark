@@ -124,9 +124,7 @@ final case class DataStreamWriter[T] private (
   def continuouslyWithCheckpointEvery(duration: Duration): DataStreamWriter[T] =
     trigger(Trigger.Continuous(duration.toMillis))
 
-  /**
-   * A ZIO-Spark specific function to run the streaming job only once.
-   */
+  /** A ZIO-Spark specific function to run the streaming job only once. */
   def once: DataStreamWriter[T] = trigger(Trigger.Once())
 
   /**
@@ -193,9 +191,7 @@ final case class DataStreamWriter[T] private (
    */
   def test: Task[Unit] = start.map(_.processAllAvailable())
 
-  /**
-   * Generate the stream as a stoppable blocking task handled by ZIO.
-   */
+  /** Generate the stream as a stoppable blocking task handled by ZIO. */
   def run: Task[Unit] =
     for {
       query <- start
