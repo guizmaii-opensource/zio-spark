@@ -30,9 +30,7 @@ final case class KeyValueGroupedDataset[K, V](underlying: UnderlyingKeyValueGrou
       f: UnderlyingKeyValueGroupedDataset[K, V] => UnderlyingDataset[U]
   ): TryAnalysis[Dataset[U]] = TryAnalysis(unpack(f))
 
-  /**
-   * Applies a transformation to the underlying KeyValueGroupedDataset.
-   */
+  /** Applies a transformation to the underlying KeyValueGroupedDataset. */
   def transformation[KNew, VNew](
       f: UnderlyingKeyValueGroupedDataset[K, V] => UnderlyingKeyValueGroupedDataset[KNew, VNew]
   ): KeyValueGroupedDataset[KNew, VNew] = KeyValueGroupedDataset(f(underlying))

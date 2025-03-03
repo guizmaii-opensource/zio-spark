@@ -15,9 +15,7 @@ import org.apache.spark.sql.{
 
 final case class RelationalGroupedDataset(underlying: UnderlyingRelationalGroupedDataset) { self =>
 
-  /**
-   * Unpack the underlying RelationalGroupedDataset into a DataFrame.
-   */
+  /** Unpack the underlying RelationalGroupedDataset into a DataFrame. */
   def unpack[U](f: UnderlyingRelationalGroupedDataset => UnderlyingDataset[U]): Dataset[U] = Dataset(f(underlying))
 
   /**

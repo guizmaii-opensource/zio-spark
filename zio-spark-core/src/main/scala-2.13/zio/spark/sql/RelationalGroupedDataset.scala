@@ -22,9 +22,7 @@ final case class RelationalGroupedDataset(underlying: UnderlyingRelationalGroupe
   ): KeyValueGroupedDataset[K, V] = KeyValueGroupedDataset(x)
   // scalafix:on
 
-  /**
-   * Unpack the underlying RelationalGroupedDataset into a DataFrame.
-   */
+  /** Unpack the underlying RelationalGroupedDataset into a DataFrame. */
   def unpack[U](f: UnderlyingRelationalGroupedDataset => UnderlyingDataset[U]): Dataset[U] = Dataset(f(underlying))
 
   /**

@@ -521,11 +521,11 @@ final case class Dataset[T](underlying: UnderlyingDataset[T]) { self =>
    * of this temporary view is tied to this Spark application.
    *
    * Global temporary view is cross-session. Its lifetime is the
-   * lifetime of the Spark application,
-   * i.e. it will be automatically dropped when the application
-   * terminates. It's tied to a system preserved database `global_temp`,
-   * and we must use the qualified name to refer a global temp view,
-   * e.g. `SELECT * FROM global_temp.view1`.
+   * lifetime of the Spark application, i.e. it will be automatically
+   * dropped when the application terminates. It's tied to a system
+   * preserved database `global_temp`, and we must use the qualified
+   * name to refer a global temp view, e.g.
+   * `SELECT * FROM global_temp.view1`.
    *
    * @throws AnalysisException
    *   if the view name is invalid or already exists
@@ -542,11 +542,11 @@ final case class Dataset[T](underlying: UnderlyingDataset[T]) { self =>
    * application.
    *
    * Global temporary view is cross-session. Its lifetime is the
-   * lifetime of the Spark application,
-   * i.e. it will be automatically dropped when the application
-   * terminates. It's tied to a system preserved database `global_temp`,
-   * and we must use the qualified name to refer a global temp view,
-   * e.g. `SELECT * FROM global_temp.view1`.
+   * lifetime of the Spark application, i.e. it will be automatically
+   * dropped when the application terminates. It's tied to a system
+   * preserved database `global_temp`, and we must use the qualified
+   * name to refer a global temp view, e.g.
+   * `SELECT * FROM global_temp.view1`.
    *
    * @group basic
    * @since 2.2.0
@@ -1571,8 +1571,8 @@ final case class Dataset[T](underlying: UnderlyingDataset[T]) { self =>
    * Inner equi-join with another `DataFrame` using the given column.
    *
    * Different from other join functions, the join column will only
-   * appear once in the output,
-   * i.e. similar to SQL's `JOIN USING` syntax.
+   * appear once in the output, i.e. similar to SQL's `JOIN USING`
+   * syntax.
    *
    * {{{
    *   // Joining df1 and df2 using the column "user_id"
@@ -1601,8 +1601,8 @@ final case class Dataset[T](underlying: UnderlyingDataset[T]) { self =>
    * Inner equi-join with another `DataFrame` using the given columns.
    *
    * Different from other join functions, the join columns will only
-   * appear once in the output,
-   * i.e. similar to SQL's `JOIN USING` syntax.
+   * appear once in the output, i.e. similar to SQL's `JOIN USING`
+   * syntax.
    *
    * {{{
    *   // Joining df1 and df2 using the columns "user_id" and "user_name"
@@ -1633,8 +1633,8 @@ final case class Dataset[T](underlying: UnderlyingDataset[T]) { self =>
    * explicitly like to perform a cross join use the `crossJoin` method.
    *
    * Different from other join functions, the join columns will only
-   * appear once in the output,
-   * i.e. similar to SQL's `JOIN USING` syntax.
+   * appear once in the output, i.e. similar to SQL's `JOIN USING`
+   * syntax.
    *
    * @param right
    *   Right side of the join operation.
