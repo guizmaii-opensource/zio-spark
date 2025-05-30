@@ -20,7 +20,7 @@ lazy val plugin =
         "org.scalameta"    %% "scalafmt-dynamic" % "3.4.3", // equals to sbt-scalafmt's scalfmt-dynamic version
         "org.scalameta"    %% "scalameta"        % "4.9.9",
         "org.apache.spark" %% "spark-core"       % "3.5.5" withSources (), // For tests only
-        "org.apache.spark" %% "spark-sql"        % "3.5.5" withSources () // For tests only
+        "org.apache.spark" %% "spark-sql"        % "3.5.6" withSources () // For tests only
       ),
       testFrameworks := Seq(new TestFramework("zio.test.sbt.ZTestFramework"))
     )
