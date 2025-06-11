@@ -12,6 +12,8 @@ import zio.spark.codegen.generation.plan.Plan.*
 
 import java.nio.file.*
 
+import sbt./
+
 object ZioSparkCodegenPlugin extends AutoPlugin {
   object autoImport {
     val sparkLibraryVersion = settingKey[String]("Specifies the version of Spark to depend on")

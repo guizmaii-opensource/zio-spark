@@ -20,10 +20,16 @@ lazy val plugin =
         "dev.zio"          %% "zio"              % zioVersion,
         "dev.zio"          %% "zio-test"         % zioVersion % Test,
         "dev.zio"          %% "zio-test-sbt"     % zioVersion % Test,
-        "org.scalameta"    %% "scalafmt-dynamic" % "3.4.3", // equals to sbt-scalafmt's scalfmt-dynamic version
-        "org.scalameta"    %% "scalameta"        % "4.9.9",
-        "org.apache.spark" %% "spark-core"       % sparkVersion withSources (), // For tests only
-        "org.apache.spark" %% "spark-sql"        % sparkVersion withSources () // For tests only
+        ("org.scalameta"    %% "scalafmt-dynamic" % "3.4.3").withCrossVersion(CrossVersion.for3Use2_13), // equals to sbt-scalafmt's scalfmt-dynamic version
+        ("org.scalameta"    %% "scalameta"        % "4.9.9").withCrossVersion(CrossVersion.for3Use2_13),
+        ("org.apache.spark" %% "spark-core"       % sparkVersion).withCrossVersion(CrossVersion.for3Use2_13).withSources(), // For tests only
+        ("org.apache.spark" %% "spark-sql"        % sparkVersion).withCrossVersion(CrossVersion.for3Use2_13).withSources() // For tests only
       ),
-      testFrameworks := Seq(new TestFramework("zio.test.sbt.ZTestFramework"))
+      testFrameworks := Seq(new TestFramework("zio.test.sbt.ZTestFramework")),
+      excludeDependencies ++= Seq(
+        "org.scala-lang.modules" %% "scala-xml",
+        "org.scala-lang.modules" %% "scala-parser-combinators",
+        "org.scala-lang.modules" %% "scala-collection-compat",
+        "org.scala-lang.modules" %% "scala-parallel-collections",
+      ),
     )
