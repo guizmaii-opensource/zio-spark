@@ -102,8 +102,7 @@ case class Method(
           else ""
 
         val deprecation: String =
-          df.collect { case d: Mod.Annot if d.toString.contains("deprecated") => d }
-            .headOption
+          df.mods.collectFirst { case d: Mod.Annot if d.toString.contains("deprecated") => d }
             .map(_.toString)
             .getOrElse("")
 

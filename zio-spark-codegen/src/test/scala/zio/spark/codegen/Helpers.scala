@@ -1,7 +1,9 @@
 package zio.spark.codegen
 
 import sbt.Keys.Classpath
+import sbt.internal.inc.PlainVirtualFile
 import sbt.internal.util.Attributed
+import xsbti.HashedVirtualFileRef
 
 import zio.{ZIO, ZLayer}
 import zio.spark.codegen.generation.Error.CodegenError
@@ -11,13 +13,19 @@ import zio.spark.codegen.structure.Method
 
 import java.io.File
 import java.net.URLClassLoader
+import java.nio.file.Paths
 
 object Helpers {
   // getClassLoader when running test, instead of using information from sbt
+
   def classLoaderToClasspath(classLoader: ClassLoader): Classpath =
     classLoader match {
-      case classLoader: URLClassLoader => classLoader.getURLs.map(_.getFile).map(x => Attributed.blank(new File(x)))
-      case _                           => Seq.empty
+      case cl: URLClassLoader =>
+        cl.getURLs.toSeq.map { url =>
+          val path = Paths.get(url.toURI)
+          Attributed.blank(PlainVirtualFile(path))
+        }
+      case _ => Seq.empty
     }
 
   // find a method coming from Spark sources.

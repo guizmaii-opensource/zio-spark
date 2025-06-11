@@ -11,14 +11,13 @@ object Helpers {
       val res =
         type_
           .parse[Type]
-          .get
-          .transform {
+          .get match {
             case t"Array"                                 => t"Seq"
             case Type.Select(q"scala.collection", tpname) => t"collection.$tpname"
             case t"$ref.$tpname"                          => tpname
           }
 
-      res.toString()
+      res.toString
     }.getOrElse("")
 
   def cleanType(type_ : String, plan: SparkPlan): String =
