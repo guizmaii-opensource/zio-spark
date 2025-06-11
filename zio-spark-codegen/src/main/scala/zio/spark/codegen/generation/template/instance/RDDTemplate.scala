@@ -11,25 +11,18 @@ case object RDDTemplate extends Template.Default {
 
   override def imports(scalaVersion: ScalaBinaryVersion): Option[String] =
     Some {
-      val baseImports: String =
-        """import org.apache.hadoop.io.compress.CompressionCodec
-          |import org.apache.spark.{Dependency, Partition, Partitioner, TaskContext}
-          |import org.apache.spark.partial.{BoundedDouble, PartialResult}
-          |import org.apache.spark.rdd.{PartitionCoalescer, RDD => UnderlyingRDD, RDDBarrier}
-          |import org.apache.spark.storage.StorageLevel
-          |
-          |import zio._
-          |
-          |import scala.collection.Map
-          |import scala.io.Codec
-          |import scala.reflect._
-          |""".stripMargin
-
-      scalaVersion match {
-        case ScalaBinaryVersion.V2_11 => baseImports
-        case _ => s"""$baseImports
-                     |import org.apache.spark.resource.ResourceProfile""".stripMargin
-      }
+      """import org.apache.hadoop.io.compress.CompressionCodec
+        |import org.apache.spark.{Dependency, Partition, Partitioner, TaskContext}
+        |import org.apache.spark.partial.{BoundedDouble, PartialResult}
+        |import org.apache.spark.rdd.{PartitionCoalescer, RDD => UnderlyingRDD, RDDBarrier}
+        |import org.apache.spark.storage.StorageLevel
+        |
+        |import zio._
+        |
+        |import scala.collection.Map
+        |import scala.io.Codec
+        |import scala.reflect._
+        |import org.apache.spark.resource.ResourceProfile""".stripMargin
     }
 
   override def implicits(scalaVersion: ScalaBinaryVersion): Option[String] =

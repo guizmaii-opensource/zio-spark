@@ -6,7 +6,12 @@ import sbt.Keys.*
 
 import zio.{ULayer, Unsafe, URLayer, ZIO, ZLayer}
 import zio.spark.codegen.generation.{Generator, Logger, Output}
-import zio.spark.codegen.generation.Environment.{ScalafmtFormatter, ScalafmtFormatterLive, ZIOSparkFolders, ZIOSparkFoldersLive}
+import zio.spark.codegen.generation.Environment.{
+  ScalafmtFormatter,
+  ScalafmtFormatterLive,
+  ZIOSparkFolders,
+  ZIOSparkFoldersLive
+}
 import zio.spark.codegen.generation.plan.Plan
 import zio.spark.codegen.generation.plan.Plan.*
 
@@ -29,8 +34,6 @@ object ZioSparkCodegenPlugin extends AutoPlugin {
       Compile / sourceGenerators += Def.task {
         val version: ScalaBinaryVersion =
           scalaBinaryVersion.value match {
-            case "2.11" => ScalaBinaryVersion.V2_11
-            case "2.12" => ScalaBinaryVersion.V2_12
             case "2.13" => ScalaBinaryVersion.V2_13
             case "3"    => ScalaBinaryVersion.V3
           }
