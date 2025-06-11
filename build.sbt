@@ -43,6 +43,9 @@ inThisBuild(
         email = "dylan@univalence.io",
         url   = url("https://github.com/dylandoamaral")
       )
+    ),
+    excludeDependencies := Seq(
+      "org.scala-lang.modules" %% "scala-collection-compat"
     )
   )
 )
@@ -97,14 +100,13 @@ addCommandAlias("testSpecific", "; clean; test;")
 addCommandAlias("testSpecificWithCoverage", "; clean; coverage; test; coverageReport;")
 
 // -- Lib versions
-lazy val zio        = "2.1.18"
-lazy val zioPrelude = "1.0.0-RC40"
+lazy val zio        = "2.1.19"
+lazy val zioPrelude = "1.0.0-RC41"
 
-lazy val scala212 = "2.12.20"
 lazy val scala213 = "2.13.16"
 lazy val scala3   = "3.3.6"
 
-lazy val supportedScalaVersions = List(scala212, scala213, scala3)
+lazy val supportedScalaVersions = List(scala213, scala3)
 
 lazy val scalaMajorVersion: SettingKey[Long] = SettingKey("scala major version")
 lazy val scalaMinorVersion: SettingKey[Long] = SettingKey("scala minor version")
@@ -250,16 +252,9 @@ def scalaVersionSpecificSources(environment: String, baseDirectory: File)(versio
 def crossScalaVersionSources(scalaVersion: String, environment: String, baseDir: File) = {
   val versions =
     CrossVersion.partialVersion(scalaVersion) match {
-      case Some((2, 11)) =>
-        List("2", "2.11+", "2.11-2.12")
-      case Some((2, 12)) =>
-        List("2", "2.11+", "2.12+", "2.11-2.12", "2.12-2.13")
-      case Some((2, 13)) =>
-        List("2", "2.11+", "2.12+", "2.13+", "2.12-2.13")
-      case Some((3, _)) =>
-        List("2.11+", "2.12+", "2.13+")
-      case _ =>
-        List()
+      case Some((2, 13)) => List("2")
+      case Some((3, _))  => List("3")
+      case _             => List.empty
     }
   scalaVersionSpecificSources(environment, baseDir)(versions: _*)
 }
@@ -282,7 +277,7 @@ lazy val crossScalaVersionSettings =
 
 lazy val commonSettings =
   Seq(
-    resolvers ++= Resolver.sonatypeOssRepos("snapshots"),
+    resolvers += Resolver.sonatypeCentralSnapshots,
     crossScalaVersions := supportedScalaVersions,
     testFrameworks += new TestFramework("zio.test.sbt.ZTestFramework"),
     scalacOptions ~= fatalWarningsAsProperties

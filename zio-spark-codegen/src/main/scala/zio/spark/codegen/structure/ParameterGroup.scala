@@ -29,6 +29,5 @@ case class ParameterGroup(underlying: Seq[Term.Param], scalaVersion: ScalaBinary
 }
 
 object ParameterGroup {
-  def fromScalaMeta(params: Seq[Term.Param], scalaVersion: ScalaBinaryVersion): ParameterGroup =
-    ParameterGroup(params, scalaVersion)
+  def fromScalaMeta(params: Seq[Term.Param], scalaVersion: ScalaBinaryVersion): ParameterGroup = ParameterGroup(params, scalaVersion)
 }
