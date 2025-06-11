@@ -54,8 +54,8 @@ Global / onChangedBuildSource := ReloadOnSourceChanges
 
 // Scalafix configuration
 ThisBuild / semanticdbEnabled := true
-ThisBuild / semanticdbVersion := scalafixSemanticdb.revision
-ThisBuild / scalafixDependencies ++= Seq("com.github.vovapolu" %% "scaluzzi" % "0.1.23")
+//ThisBuild / semanticdbVersion := scalafixSemanticdb.revision
+//ThisBuild / scalafixDependencies ++= Seq("com.github.vovapolu" %% "scaluzzi" % "0.1.23")
 
 // Java 17+ stuff
 ThisBuild / Test / javaOptions ++= Seq("--add-exports", "java.base/sun.nio.ch=ALL-UNNAMED")
@@ -78,14 +78,14 @@ val excludedPackages: Seq[String] =
     "zio\\.spark\\.sql\\.LowPrioritySQLImplicits.*" // Spark implicits
   )
 
-ThisBuild / coverageFailOnMinimum           := false
-ThisBuild / coverageMinimumStmtTotal        := 80
-ThisBuild / coverageMinimumBranchTotal      := 80
-ThisBuild / coverageMinimumStmtPerPackage   := 50
-ThisBuild / coverageMinimumBranchPerPackage := 50
-ThisBuild / coverageMinimumStmtPerFile      := 0
-ThisBuild / coverageMinimumBranchPerFile    := 0
-ThisBuild / coverageExcludedPackages        := excludedPackages.mkString(";")
+//ThisBuild / coverageFailOnMinimum           := false
+//ThisBuild / coverageMinimumStmtTotal        := 80
+//ThisBuild / coverageMinimumBranchTotal      := 80
+//ThisBuild / coverageMinimumStmtPerPackage   := 50
+//ThisBuild / coverageMinimumBranchPerPackage := 50
+//ThisBuild / coverageMinimumStmtPerFile      := 0
+//ThisBuild / coverageMinimumBranchPerFile    := 0
+//ThisBuild / coverageExcludedPackages        := excludedPackages.mkString(";")
 
 // Aliases
 addCommandAlias("fmt", "scalafmt")
@@ -182,19 +182,6 @@ lazy val exampleZIOEcosystem =
       exampleWordCount
     )
 
-lazy val examples =
-  (project in file("examples"))
-    .settings(noPublishingSettings)
-    .settings(crossScalaVersions := Nil)
-    .aggregate(
-      exampleSimpleApp,
-      exampleSparkCodeMigration,
-      exampleUsingOlderSparkVersion,
-      exampleWordCount,
-      exampleZparkio,
-      exampleZIOEcosystem
-    )
-
 /** Generates required libraries for magnolia. */
 def generateMagnoliaDependency(scalaMajor: Long, scalaMinor: Long): Seq[ModuleID] =
   scalaMinor match {
@@ -207,8 +194,8 @@ def generateMagnoliaDependency(scalaMajor: Long, scalaMinor: Long): Seq[ModuleID
 def generateSparkLibraryDependencies(scalaMajor: Long, scalaMinor: Long): Seq[ModuleID] = {
   val mappingVersion       = if (scalaMajor == 2) scalaMinor else 13
   val sparkVersion: String = sparkScalaVersionMapping(mappingVersion)
-  val sparkCore            = "org.apache.spark" %% "spark-core" % sparkVersion % Provided withSources ()
-  val sparkSql             = "org.apache.spark" %% "spark-sql"  % sparkVersion % Provided withSources ()
+  val sparkCore            = ("org.apache.spark" %% "spark-core" % sparkVersion % Provided).withSources()
+  val sparkSql             = ("org.apache.spark" %% "spark-sql"  % sparkVersion % Provided).withSources()
 
   scalaMajor match {
     case 2 => Seq(sparkCore, sparkSql)
@@ -256,7 +243,7 @@ def crossScalaVersionSources(scalaVersion: String, environment: String, baseDir:
       case Some((3, _))  => List("3")
       case _             => List.empty
     }
-  scalaVersionSpecificSources(environment, baseDir)(versions: _*)
+  scalaVersionSpecificSources(environment, baseDir)(versions*)
 }
 
 lazy val crossScalaVersionSettings =
@@ -277,7 +264,7 @@ lazy val crossScalaVersionSettings =
 
 lazy val commonSettings =
   Seq(
-    resolvers += Resolver.sonatypeCentralSnapshots,
+    resolvers ++= Resolver.sonatypeOssRepos("snapshots"),
     crossScalaVersions := supportedScalaVersions,
     testFrameworks += new TestFramework("zio.test.sbt.ZTestFramework"),
     scalacOptions ~= fatalWarningsAsProperties
