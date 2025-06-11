@@ -14,49 +14,32 @@ case object DatasetTemplate extends Template.Default {
 
   override def imports(scalaVersion: ScalaBinaryVersion): Option[String] =
     Some {
-      val baseImports: String =
-        """import org.apache.spark.sql.{
-          |  Column,
-          |  Dataset => UnderlyingDataset,
-          |  DataFrameNaFunctions => UnderlyingDataFrameNaFunctions,
-          |  DataFrameStatFunctions => UnderlyingDataFrameStatFunctions,
-          |  RelationalGroupedDataset => UnderlyingRelationalGroupedDataset,
-          |  KeyValueGroupedDataset => UnderlyingKeyValueGroupedDataset,
-          |  Encoder,
-          |  Row,
-          |  TypedColumn,
-          |  Sniffer
-          |}
-          |import zio.spark.sql.streaming.DataStreamWriter
-          |import org.apache.spark.sql.types.StructType
-          |import org.apache.spark.storage.StorageLevel
-          |
-          |import zio._
-          |import zio.spark.rdd._
-          |
-          |import scala.reflect.runtime.universe.TypeTag
-          |
-          |import java.io.IOException
-          |""".stripMargin
-
-      scalaVersion match {
-        case ScalaBinaryVersion.V2_13 | ScalaBinaryVersion.V3 =>
-          s"""$baseImports
-             |import org.apache.spark.sql.execution.ExplainMode
-             |import org.apache.spark.sql.Observation
-             |import org.apache.spark.sql.types.Metadata
-             |import scala.jdk.CollectionConverters._""".stripMargin
-        case ScalaBinaryVersion.V2_12 =>
-          s"""$baseImports
-             |import org.apache.spark.sql.execution.ExplainMode
-             |import org.apache.spark.sql.Observation
-             |import org.apache.spark.sql.types.Metadata
-             |import scala.collection.JavaConverters._""".stripMargin
-        case ScalaBinaryVersion.V2_11 =>
-          s"""$baseImports
-             |import org.apache.spark.sql.execution.command.ExplainCommand
-             |import scala.collection.JavaConverters._""".stripMargin
-      }
+      """import org.apache.spark.sql.{
+        |  Column,
+        |  Dataset => UnderlyingDataset,
+        |  DataFrameNaFunctions => UnderlyingDataFrameNaFunctions,
+        |  DataFrameStatFunctions => UnderlyingDataFrameStatFunctions,
+        |  RelationalGroupedDataset => UnderlyingRelationalGroupedDataset,
+        |  KeyValueGroupedDataset => UnderlyingKeyValueGroupedDataset,
+        |  Encoder,
+        |  Row,
+        |  TypedColumn,
+        |  Sniffer
+        |}
+        |import zio.spark.sql.streaming.DataStreamWriter
+        |import org.apache.spark.sql.types.StructType
+        |import org.apache.spark.storage.StorageLevel
+        |
+        |import zio._
+        |import zio.spark.rdd._
+        |
+        |import scala.reflect.runtime.universe.TypeTag
+        |
+        |import java.io.IOException
+        |import org.apache.spark.sql.execution.ExplainMode
+        |import org.apache.spark.sql.Observation
+        |import org.apache.spark.sql.types.Metadata
+        |import scala.jdk.CollectionConverters._""".stripMargin
     }
 
   override def implicits(scalaVersion: ScalaBinaryVersion): Option[String] =

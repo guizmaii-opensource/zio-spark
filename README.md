@@ -85,7 +85,7 @@ You can find the latest version on
 
 ### Spark Version
 
-ZIO-Spark is compatible with Scala 2.11, 2.12 and 2.13. Spark is provided, you must add your own Spark version in 
+ZIO-Spark is compatible with Scala 2.13 and Scala 3. Spark is provided, you must add your own Spark version in 
 build.sbt (as you would usually). 
 
 ```scala

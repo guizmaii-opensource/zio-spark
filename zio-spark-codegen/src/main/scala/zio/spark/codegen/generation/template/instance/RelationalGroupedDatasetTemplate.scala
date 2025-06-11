@@ -12,35 +12,21 @@ case object RelationalGroupedDatasetTemplate extends Template.Default {
 
   override def imports(scalaVersion: ScalaBinaryVersion): Option[String] =
     Some {
-      scalaVersion match {
-        case ScalaBinaryVersion.V2_11 =>
-          """import org.apache.spark.sql.{
-            |  Column,
-            |  Dataset => UnderlyingDataset,
-            |  RelationalGroupedDataset => UnderlyingRelationalGroupedDataset
-            |}
-            |""".stripMargin
-        case _ =>
-          """import org.apache.spark.sql.{
-            |  Column,
-            |  Encoder,
-            |  Dataset => UnderlyingDataset,
-            |  RelationalGroupedDataset => UnderlyingRelationalGroupedDataset,
-            |  KeyValueGroupedDataset => UnderlyingKeyValueGroupedDataset,
-            |}
-            |""".stripMargin
-      }
+      """import org.apache.spark.sql.{
+        |  Column,
+        |  Encoder,
+        |  Dataset => UnderlyingDataset,
+        |  RelationalGroupedDataset => UnderlyingRelationalGroupedDataset,
+        |  KeyValueGroupedDataset => UnderlyingKeyValueGroupedDataset,
+        |}
+        |""".stripMargin
     }
 
   override def implicits(scalaVersion: ScalaBinaryVersion): Option[String] =
     Some {
-      scalaVersion match {
-        case ScalaBinaryVersion.V2_11 => ""
-        case _ =>
-          s"""implicit private def liftKeyValueGroupedDataset[K, V](
-             |  x: UnderlyingKeyValueGroupedDataset[K, V]
-             |): KeyValueGroupedDataset[K, V] = KeyValueGroupedDataset(x)""".stripMargin
-      }
+      s"""implicit private def liftKeyValueGroupedDataset[K, V](
+         |  x: UnderlyingKeyValueGroupedDataset[K, V]
+         |): KeyValueGroupedDataset[K, V] = KeyValueGroupedDataset(x)""".stripMargin
     }
 
   override def helpers: Helper = unpacks && transformations && gets

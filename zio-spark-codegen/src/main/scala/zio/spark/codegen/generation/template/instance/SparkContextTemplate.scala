@@ -11,38 +11,22 @@ case object SparkContextTemplate extends Template.Default {
 
   override def imports(scalaVersion: ScalaBinaryVersion): Option[String] =
     Some {
-      val baseImports: String =
-        """
-          |import zio._
-          |import zio.spark.rdd.RDD
-          |
-          |import org.apache.hadoop.conf.Configuration
-          |import org.apache.hadoop.mapred.{InputFormat, JobConf}
-          |import org.apache.hadoop.mapreduce.{InputFormat => NewInputFormat}
-          |import org.apache.spark.broadcast.Broadcast
-          |import org.apache.spark.input.PortableDataStream
-          |import org.apache.spark.scheduler.SchedulingMode.SchedulingMode
-          |import org.apache.spark.util._
-          |import org.apache.spark.{SimpleFutureAction, SparkConf, SparkStatusTracker, TaskContext, SparkContext => UnderlyingSparkContext}
-          |import org.apache.spark.rdd.{RDD => UnderlyingRDD}
-          |
-          |import scala.reflect.ClassTag
-          |""".stripMargin
-
-      scalaVersion match {
-        case ScalaBinaryVersion.V2_11 =>
-          s"""$baseImports
-             |import org.apache.spark.{
-             |  Accumulable,
-             |  Accumulator,
-             |  AccumulatorParam,
-             |  AccumulableParam
-             |}
-             |import scala.collection.generic.Growable""".stripMargin
-        case _ =>
-          s"""$baseImports
-             |import org.apache.spark.resource._""".stripMargin
-      }
+      """
+        |import zio._
+        |import zio.spark.rdd.RDD
+        |
+        |import org.apache.hadoop.conf.Configuration
+        |import org.apache.hadoop.mapred.{InputFormat, JobConf}
+        |import org.apache.hadoop.mapreduce.{InputFormat => NewInputFormat}
+        |import org.apache.spark.broadcast.Broadcast
+        |import org.apache.spark.input.PortableDataStream
+        |import org.apache.spark.scheduler.SchedulingMode.SchedulingMode
+        |import org.apache.spark.util._
+        |import org.apache.spark.{SimpleFutureAction, SparkConf, SparkStatusTracker, TaskContext, SparkContext => UnderlyingSparkContext}
+        |import org.apache.spark.rdd.{RDD => UnderlyingRDD}
+        |
+        |import scala.reflect.ClassTag
+        |import org.apache.spark.resource._""".stripMargin
     }
 
   override def implicits(scalaVersion: ScalaBinaryVersion): Option[String] =
