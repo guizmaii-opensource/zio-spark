@@ -11,6 +11,8 @@ addCommandAlias("check", "; fmtCheck;")
 val sparkVersion = "4.0.0"
 val zioVersion = "2.0.4"
 
+scalaVersion := "3.7.1"
+
 lazy val plugin =
   (project in file("."))
     .enablePlugins(SbtPlugin)
@@ -21,7 +23,7 @@ lazy val plugin =
         "dev.zio"          %% "zio-test"         % zioVersion % Test,
         "dev.zio"          %% "zio-test-sbt"     % zioVersion % Test,
         ("org.scalameta"    %% "scalafmt-dynamic" % "3.4.3").withCrossVersion(CrossVersion.for3Use2_13), // equals to sbt-scalafmt's scalfmt-dynamic version
-        ("org.scalameta"    %% "scalameta"        % "4.9.9").withCrossVersion(CrossVersion.for3Use2_13),
+        "org.scalameta"    %% "scalameta"        % "4.13.6",
         ("org.apache.spark" %% "spark-core"       % sparkVersion).withCrossVersion(CrossVersion.for3Use2_13).withSources(), // For tests only
         ("org.apache.spark" %% "spark-sql"        % sparkVersion).withCrossVersion(CrossVersion.for3Use2_13).withSources() // For tests only
       ),
