@@ -1,7 +1,7 @@
 package zio.spark.sql
 
 import org.apache.spark.SparkConf
-import org.apache.spark.sql.{Encoder, Row, SparkSession => UnderlyingSparkSession}
+import org.apache.spark.sql.{Encoder, ExtraSparkSessionFeature, Row, SparkSession => UnderlyingSparkSession}
 import org.apache.spark.sql.types.StructType
 
 import zio._
