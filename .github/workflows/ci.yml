@@ -42,7 +42,7 @@ jobs:
           check-latest: true
 
       - name: Run example
-        run: sbt "project example${{ matrix.example }}" run
+        run: sbt "example${{ matrix.example }}/run"
 
   documentation:
     runs-on: ubuntu-latest
@@ -81,10 +81,10 @@ jobs:
 
       - name: Run tests
         if: ${{ !startsWith(matrix.scala, '2.13.') || matrix.project != 'coreTests' }}
-        run: sbt ++${{ matrix.scala }} "project ${{ matrix.project }}" testSpecific
+        run: sbt ++${{ matrix.scala }} ${{ matrix.project }}/testSpecific
       - name: Run tests 2.13.X with coverage
         if: ${{ startsWith(matrix.scala, '2.13.') && matrix.project == 'coreTests' }}
-        run: sbt ++${{ matrix.scala }} "project coreTests" testSpecificWithCoverage
+        run: sbt ++${{ matrix.scala }} coreTests/testSpecificWithCoverage
       - name: Publish coverage to codecov
         if: ${{ startsWith(matrix.scala, '2.13.') && matrix.project == 'coreTests' }}
         uses: codecov/codecov-action@v2

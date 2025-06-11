@@ -1,15 +1,14 @@
 ThisBuild / organization := "com.guizmaii"
 
-// Spark still uses 1.X.X version of scala-xml
-ThisBuild / libraryDependencySchemes += "org.scala-lang.modules" %% "scala-xml" % VersionScheme.Always
-
 // Aliases
 addCommandAlias("fmt", "scalafmt")
 addCommandAlias("fmtCheck", "scalafmtCheckAll")
 addCommandAlias("check", "; fmtCheck;")
 
-val sparkVersion = "3.5.6"
+val sparkVersion = "4.0.0"
 val zioVersion = "2.0.4"
+
+scalaVersion := "3.7.1"
 
 lazy val plugin =
   (project in file("."))
@@ -20,10 +19,16 @@ lazy val plugin =
         "dev.zio"          %% "zio"              % zioVersion,
         "dev.zio"          %% "zio-test"         % zioVersion % Test,
         "dev.zio"          %% "zio-test-sbt"     % zioVersion % Test,
-        "org.scalameta"    %% "scalafmt-dynamic" % "3.4.3", // equals to sbt-scalafmt's scalfmt-dynamic version
-        "org.scalameta"    %% "scalameta"        % "4.9.9",
-        "org.apache.spark" %% "spark-core"       % sparkVersion withSources (), // For tests only
-        "org.apache.spark" %% "spark-sql"        % sparkVersion withSources () // For tests only
+        ("org.scalameta"    %% "scalafmt-dynamic" % "3.4.3").withCrossVersion(CrossVersion.for3Use2_13), // equals to sbt-scalafmt's scalfmt-dynamic version
+        "org.scalameta"    %% "scalameta"        % "4.13.6",
+        ("org.apache.spark" %% "spark-core"       % sparkVersion).withCrossVersion(CrossVersion.for3Use2_13).withSources(), // For tests only
+        ("org.apache.spark" %% "spark-sql"        % sparkVersion).withCrossVersion(CrossVersion.for3Use2_13).withSources() // For tests only
       ),
-      testFrameworks := Seq(new TestFramework("zio.test.sbt.ZTestFramework"))
+      testFrameworks := Seq(new TestFramework("zio.test.sbt.ZTestFramework")),
+      excludeDependencies ++= Seq(
+        "org.scala-lang.modules" %% "scala-xml",
+        "org.scala-lang.modules" %% "scala-parser-combinators",
+        "org.scala-lang.modules" %% "scala-collection-compat",
+        "org.scala-lang.modules" %% "scala-parallel-collections",
+      ),
     )

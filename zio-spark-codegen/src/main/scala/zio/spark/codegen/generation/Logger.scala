@@ -13,7 +13,7 @@ object Logger {
   def success(text: => String): URIO[Logger, Unit] = ZIO.service[Logger].flatMap(_.success(text))
   def error(text: => String): URIO[Logger, Unit]   = ZIO.service[Logger].flatMap(_.error(text))
 
-  val live: ULayer[Logger] = ZLayer(ZIO.console.map(LoggerLive))
+  val live: ULayer[Logger] = ZLayer(ZIO.console.map(LoggerLive.apply))
 
   val silent: ULayer[Logger] = ZLayer.succeed(LoggerSilent)
 
