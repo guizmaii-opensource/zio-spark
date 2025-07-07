@@ -8,8 +8,8 @@ addCommandAlias("fmt", "scalafmt")
 addCommandAlias("fmtCheck", "scalafmtCheckAll")
 addCommandAlias("check", "; fmtCheck;")
 
-val sparkVersion = "3.5.6"
-val zioVersion = "2.0.4"
+val sparkVersion = "4.0.0"
+val zioVersion   = "2.0.4"
 
 lazy val plugin =
   (project in file("."))
