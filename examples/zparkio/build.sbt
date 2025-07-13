@@ -9,4 +9,4 @@ libraryDependencies ++= Seq(
   "org.apache.spark" %% "spark-sql"  % sparkVersion % Provided
 )
 
-libraryDependencies += "dev.zio" %% "zio-logging" % "2.5.0"
+libraryDependencies += "dev.zio" %% "zio-logging" % "2.5.1"
