@@ -38,7 +38,7 @@ case object DatasetTemplate extends Template.Default {
         |import scala.reflect.runtime.universe.TypeTag
         |
         |import java.io.IOException
-        |import java.{util}
+        |import java.util
         |import org.apache.spark.sql.execution.ExplainMode
         |import org.apache.spark.sql.Observation
         |import org.apache.spark.sql.types.Metadata
