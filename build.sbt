@@ -189,7 +189,7 @@ lazy val exampleZIOEcosystem =
 
 lazy val examples =
   (project in file("examples"))
-    .settings(name := "examples-aggregate")
+    .settings(name := "examples")
     .settings(noPublishingSettings)
     .settings(crossScalaVersions := Nil)
     .aggregate(
