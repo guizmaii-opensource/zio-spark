@@ -19,7 +19,9 @@ object SimpleApp extends ZIOSparkAppDefault {
   def resourcePath(fileName: String): Path = {
     val url = this.getClass.getClassLoader.getResource(fileName)
     println(s"Resource URL: $url")
-    println(s"Resource URI: ${url.toURI.getPath}")
+    println(s"Resource URI: ${url.toURI}")
+    println(s"Resource URI getPath: ${url.toURI.getPath}")
+    println(s"Resource URI getRawPath: ${url.toURI.getRawPath}")
     Paths.get(this.getClass.getClassLoader.getResource(fileName).toURI)
   }
 
