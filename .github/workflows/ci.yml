@@ -81,10 +81,10 @@ jobs:
 
       - name: Run tests
         if: ${{ !startsWith(matrix.scala, '2.13.') || matrix.project != 'coreTests' }}
-        run: sbt '++${{ matrix.scala }} ${{ matrix.project }}/testSpecific'
+        run: sbt '++${{ matrix.scala }} ${{ matrix.project }}/test'
       - name: Run tests 2.13.X with coverage
         if: ${{ startsWith(matrix.scala, '2.13.') && matrix.project == 'coreTests' }}
-        run: sbt '++${{ matrix.scala }} coreTests/testSpecificWithCoverage'
+        run: sbt '++${{ matrix.scala }} coreTests/test'
       - name: Publish coverage to codecov
         if: ${{ startsWith(matrix.scala, '2.13.') && matrix.project == 'coreTests' }}
         uses: codecov/codecov-action@v2
