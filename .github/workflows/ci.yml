@@ -42,7 +42,7 @@ jobs:
           check-latest: true
 
       - name: Run example
-        run: sbt "project example${{ matrix.example }}" run
+        run: sbt "example${{ matrix.example }} / run"
 
   documentation:
     runs-on: ubuntu-latest
