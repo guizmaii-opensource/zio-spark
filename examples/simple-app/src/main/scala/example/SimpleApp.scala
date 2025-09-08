@@ -34,6 +34,7 @@ object SimpleApp extends ZIOSparkAppDefault {
   val job: ZIO[SparkSession, Throwable, Unit] =
     for {
       filePath <- readfilePath
+      _ <- ZIO.debug(s"File path: $filePath")
       maybePeople <- pipeline(filePath).run
       _ <-
         maybePeople match {
