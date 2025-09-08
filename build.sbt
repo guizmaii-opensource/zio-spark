@@ -65,6 +65,12 @@ ThisBuild / Test / javaOptions ++= Seq("--add-opens", "java.base/java.lang=ALL-U
 ThisBuild / Test / javaOptions ++= Seq("--add-opens", "java.base/java.lang.invoke=ALL-UNNAMED")
 ThisBuild / Test / fork := true // Needed otherwise the javaOptions are not taken into account
 
+ThisBuild / excludeDependencies ++= Seq(
+  "org.scala-lang.modules" % "scala-xml_2.13",
+  "org.scala-lang.modules" % "scala-parser-combinators_2.13",
+  "org.scala-lang.modules" % "scala-parallel-collections_2.13"
+)
+
 // SCoverage configuration
 val excludedPackages: Seq[String] =
   Seq(
