@@ -3,6 +3,7 @@ package zio.spark.codegen
 import org.scalafmt.interfaces.Scalafmt
 import sbt.{settingKey, AutoPlugin, Compile, Def}
 import sbt.Keys.*
+import sbt./
 
 import zio.{ULayer, Unsafe, URLayer, ZIO, ZLayer}
 import zio.spark.codegen.generation.{Generator, Logger, Output}

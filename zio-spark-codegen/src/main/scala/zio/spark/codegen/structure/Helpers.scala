@@ -8,16 +8,15 @@ import scala.util.Try
 object Helpers {
   def cleanPrefixPackage(type_ : String): String =
     Try {
-      val res =
-        type_
-          .parse[Type]
-          .get
-          .transform {
-            case t"Array"                                 => t"Seq"
-            case Type.Select(q"scala.collection", tpname) => t"collection.$tpname"
-            case t"$ref.$tpname"                          => tpname
-          }
-
+      def transformType(tpe: Type): Type = tpe match {
+        case t"Array" => t"Seq"
+        case Type.Select(q"scala.collection", tpname) => t"collection.$tpname"
+        case Type.Select(_, tpname: Type.Name) => tpname
+        case Type.Apply(tpe, args) => Type.Apply(transformType(tpe), args.map(transformType))
+        case other => other
+      }
+      
+      val res = transformType(type_.parse[Type].get)
       res.toString()
     }.getOrElse("")
 

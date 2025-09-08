@@ -1,3 +1,7 @@
+import sbt.Defaults
+
+val IntegrationTestConfig = config("it").extend(Test)
+
 // Common configuration
 inThisBuild(
   List(
@@ -52,10 +56,10 @@ inThisBuild(
 
 Global / onChangedBuildSource := ReloadOnSourceChanges
 
-// Scalafix configuration
-ThisBuild / semanticdbEnabled := true
-ThisBuild / semanticdbVersion := scalafixSemanticdb.revision
-ThisBuild / scalafixDependencies ++= Seq("com.github.vovapolu" %% "scaluzzi" % "0.1.23")
+// Scalafix configuration - disabled for sbt 2 compatibility
+// ThisBuild / semanticdbEnabled := true
+// ThisBuild / semanticdbVersion := "4.9.9"
+// ThisBuild / scalafixDependencies ++= Seq("com.github.vovapolu" %% "scaluzzi" % "0.1.23")
 
 // Java 17+ stuff
 ThisBuild / Test / javaOptions ++= Seq("--add-exports", "java.base/sun.nio.ch=ALL-UNNAMED")
@@ -65,11 +69,7 @@ ThisBuild / Test / javaOptions ++= Seq("--add-opens", "java.base/java.lang=ALL-U
 ThisBuild / Test / javaOptions ++= Seq("--add-opens", "java.base/java.lang.invoke=ALL-UNNAMED")
 ThisBuild / Test / fork := true // Needed otherwise the javaOptions are not taken into account
 
-ThisBuild / excludeDependencies ++= Seq(
-  "org.scala-lang.modules" % "scala-xml_2.13",
-  "org.scala-lang.modules" % "scala-parser-combinators_2.13",
-  "org.scala-lang.modules" % "scala-parallel-collections_2.13"
-)
+Global / conflictWarning := ConflictWarning.disable
 
 // SCoverage configuration
 val excludedPackages: Seq[String] =
@@ -84,14 +84,15 @@ val excludedPackages: Seq[String] =
     "zio\\.spark\\.sql\\.LowPrioritySQLImplicits.*" // Spark implicits
   )
 
-ThisBuild / coverageFailOnMinimum           := false
-ThisBuild / coverageMinimumStmtTotal        := 80
-ThisBuild / coverageMinimumBranchTotal      := 80
-ThisBuild / coverageMinimumStmtPerPackage   := 50
-ThisBuild / coverageMinimumBranchPerPackage := 50
-ThisBuild / coverageMinimumStmtPerFile      := 0
-ThisBuild / coverageMinimumBranchPerFile    := 0
-ThisBuild / coverageExcludedPackages        := excludedPackages.mkString(";")
+// SCoverage configuration - disabled for sbt 2 compatibility
+// ThisBuild / coverageFailOnMinimum           := false
+// ThisBuild / coverageMinimumStmtTotal        := 80
+// ThisBuild / coverageMinimumBranchTotal      := 80
+// ThisBuild / coverageMinimumStmtPerPackage   := 50
+// ThisBuild / coverageMinimumBranchPerPackage := 50
+// ThisBuild / coverageMinimumStmtPerFile      := 0
+// ThisBuild / coverageMinimumBranchPerFile    := 0
+// ThisBuild / coverageExcludedPackages        := excludedPackages.mkString(";")
 
 // Aliases
 addCommandAlias("fmt", "scalafmt")
@@ -119,7 +120,7 @@ lazy val scalaMinorVersion: SettingKey[Long] = SettingKey("scala minor version")
 
 lazy val core =
   (project in file("zio-spark-core"))
-    .configs(IntegrationTest)
+    .configs(IntegrationTestConfig)
     .settings(crossScalaVersionSettings)
     .settings(commonSettings)
     .settings(
@@ -132,7 +133,7 @@ lazy val core =
         "dev.zio" %% "zio-prelude" % zioPrelude
       ) ++ generateSparkLibraryDependencies(scalaMajorVersion.value, scalaMinorVersion.value)
         ++ generateMagnoliaDependency(scalaMajorVersion.value, scalaMinorVersion.value),
-      Defaults.itSettings
+      IntegrationTestConfig / testOptions := (Test / testOptions).value
     )
     .enablePlugins(ZioSparkCodegenPlugin)
 
@@ -213,8 +214,8 @@ def generateMagnoliaDependency(scalaMajor: Long, scalaMinor: Long): Seq[ModuleID
 def generateSparkLibraryDependencies(scalaMajor: Long, scalaMinor: Long): Seq[ModuleID] = {
   val mappingVersion       = if (scalaMajor == 2) scalaMinor else 13
   val sparkVersion: String = sparkScalaVersionMapping(mappingVersion)
-  val sparkCore            = "org.apache.spark" %% "spark-core" % sparkVersion % Provided withSources ()
-  val sparkSql             = "org.apache.spark" %% "spark-sql"  % sparkVersion % Provided withSources ()
+  val sparkCore            = ("org.apache.spark" %% "spark-core" % sparkVersion % Provided).withSources()
+  val sparkSql             = ("org.apache.spark" %% "spark-sql"  % sparkVersion % Provided).withSources()
 
   scalaMajor match {
     case 2 => Seq(sparkCore, sparkSql)
@@ -262,7 +263,7 @@ def crossScalaVersionSources(scalaVersion: String, environment: String, baseDir:
       case Some((3, _))  => List("3")
       case _             => List.empty
     }
-  scalaVersionSpecificSources(environment, baseDir)(versions: _*)
+  scalaVersionSpecificSources(environment, baseDir)(versions*)
 }
 
 lazy val crossScalaVersionSettings =

@@ -25,8 +25,8 @@ object Loader {
       classpath
         .map(_.data)
         .collectFirst {
-          case f if f.getAbsolutePath.contains(moduleName) =>
-            f.getAbsolutePath.replaceFirst("\\.jar$", "-sources.jar")
+          case f if f.id.contains(moduleName) =>
+            f.id.replaceFirst("\\.jar$", "-sources.jar")
         }
 
     maybePath match {

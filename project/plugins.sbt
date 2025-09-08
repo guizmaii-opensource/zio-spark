@@ -1,3 +1,5 @@
+Global / conflictWarning := ConflictWarning.disable
+
 addSbtPlugin("ch.epfl.scala"  % "sbt-scalafix"   % "0.14.3")
 addSbtPlugin("com.github.sbt" % "sbt-ci-release" % "1.11.2")
 addSbtPlugin("org.typelevel"  % "sbt-tpolecat"   % "0.5.2")
