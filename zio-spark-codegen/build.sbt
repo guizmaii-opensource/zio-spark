@@ -2,6 +2,9 @@ ThisBuild / organization := "com.guizmaii"
 
 Global / conflictWarning := ConflictWarning.disable
 
+// Exclude unused sbt version from lint warnings  
+Global / excludeLintKeys += (Zero / pluginCrossBuild / sbtVersion)
+
 // Aliases
 addCommandAlias("fmt", "scalafmt")
 addCommandAlias("fmtCheck", "scalafmtCheckAll")
