@@ -14,7 +14,7 @@ object SimpleApp extends ZIOSparkAppDefault {
 
   final case class Person(name: String, age: Int)
 
-  private val filePath: String = "examples/simple-app/src/main/resources/data.csv"
+  private val filePath: String = "src/main/resources/data.csv"
 
   def read: SIO[DataFrame] = SparkSession.read.schema[Person].withHeader.withDelimiter(";").csv(filePath)
 
