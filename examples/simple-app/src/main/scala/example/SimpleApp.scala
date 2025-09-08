@@ -16,11 +16,16 @@ object SimpleApp extends ZIOSparkAppDefault {
 
   final case class Person(name: String, age: Int)
 
-  def resourcePath(fileName: String): Path = Paths.get(this.getClass.getClassLoader.getResource(fileName).toURI)
+  def resourcePath(fileName: String): Path = {
+    val url = this.getClass.getClassLoader.getResource(fileName)
+    println(s"Resource URL: $url")
+    println(s"Resource URI: ${url.toURI.getPath}")
+    Paths.get(this.getClass.getClassLoader.getResource(fileName).toURI)
+  }
 
   private val readfilePath: Task[String] =
     ZIO.attempt {
-      resourcePath("/data.csv").toFile.getAbsolutePath
+      resourcePath("data.csv").toFile.getAbsolutePath
     }
 
   def read(filePath: String): SIO[DataFrame] = SparkSession.read.schema[Person].withHeader.withDelimiter(";").csv(filePath)
