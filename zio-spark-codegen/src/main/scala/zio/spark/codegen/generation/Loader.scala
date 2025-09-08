@@ -27,7 +27,7 @@ object Loader {
         .collectFirst {
           case f if f.id.contains(moduleName) =>
             // Try to resolve the actual file path from the virtual file reference
-            try {
+            try
               // First try to get the file directly if it's a real file
               if (f.id.startsWith("/")) {
                 // It's already an absolute path
@@ -35,27 +35,30 @@ object Loader {
                 new File(sourcesPath)
               } else {
                 // Handle virtual file references with placeholders
-                val coursierCache = scala.sys.props.get("coursier.cache")
-                  .orElse(Option(System.getenv("COURSIER_CACHE")))
-                  .getOrElse(scala.util.Properties.userHome + "/Library/Caches/Coursier/v1")
-                
+                val coursierCache =
+                  scala.sys.props
+                    .get("coursier.cache")
+                    .orElse(Option(System.getenv("COURSIER_CACHE")))
+                    .getOrElse(scala.util.Properties.userHome + "/Library/Caches/Coursier/v1")
+
                 val resolvedPath = f.id.replace("${CSR_CACHE}", coursierCache)
-                val sourcesPath = resolvedPath.replaceFirst("\\.jar$", "-sources.jar")
+                val sourcesPath  = resolvedPath.replaceFirst("\\.jar$", "-sources.jar")
                 new File(sourcesPath)
               }
-            } catch {
+            catch {
               case _: Exception =>
                 // Fallback: try common coursier locations
-                val possiblePaths = Seq(
-                  scala.util.Properties.userHome + "/Library/Caches/Coursier/v1",
-                  scala.util.Properties.userHome + "/.cache/coursier/v1",
-                  scala.util.Properties.userHome + "/.coursier/cache/v1",
-                  "/tmp/coursier-cache"
-                )
-                
-                val jarPath = f.id.replace("${CSR_CACHE}", "")
+                val possiblePaths =
+                  Seq(
+                    scala.util.Properties.userHome + "/Library/Caches/Coursier/v1",
+                    scala.util.Properties.userHome + "/.cache/coursier/v1",
+                    scala.util.Properties.userHome + "/.coursier/cache/v1",
+                    "/tmp/coursier-cache"
+                  )
+
+                val jarPath     = f.id.replace("${CSR_CACHE}", "")
                 val sourcesPath = jarPath.replaceFirst("\\.jar$", "-sources.jar")
-                
+
                 possiblePaths
                   .map(cache => new File(cache + sourcesPath))
                   .find(_.exists())
@@ -71,7 +74,13 @@ object Loader {
             .attempt(new JarFile(file))
             .mapError(e => SourceNotFoundError(file.getAbsolutePath, moduleName, e))
         } else {
-          ZIO.fail(SourceNotFoundError(file.getAbsolutePath, moduleName, new java.io.FileNotFoundException(s"Source JAR not found: ${file.getAbsolutePath}")))
+          ZIO.fail(
+            SourceNotFoundError(
+              file.getAbsolutePath,
+              moduleName,
+              new java.io.FileNotFoundException(s"Source JAR not found: ${file.getAbsolutePath}")
+            )
+          )
         }
     }
   }
@@ -98,11 +107,10 @@ object Loader {
               }
               val stream: InputStream     = jar.getInputStream(entry)
               val content: BufferedSource = Source.fromInputStream(stream)
-              try {
+              try
                 content.getLines().mkString("\n").parse[meta.Source].get
-              } finally {
+              finally
                 content.close()
-              }
             }
             .mapError(SourceNotFoundError(filePath, moduleName, _))
       } yield source

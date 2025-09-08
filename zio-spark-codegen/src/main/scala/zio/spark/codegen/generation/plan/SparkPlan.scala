@@ -73,11 +73,11 @@ case class SparkPlan(module: Module, template: Template) extends Plan { self =>
       classpath    <- ZIO.service[Classpath]
       scalaVersion <- ZIO.service[ScalaBinaryVersion]
       // In Spark 4, SQL classes moved to org.apache.spark.sql.classic package
-      filePath = 
+      filePath =
         if (module.name == "spark-sql") s"${module.path}/classic/$name.scala"
         else s"${module.path}/$name.scala"
       _ = println(s"============= file: $filePath, module: ${module.name} =============")
-      sparkSource  <- sourceFromClasspath(filePath, module.name, classpath)
+      sparkSource <- sourceFromClasspath(filePath, module.name, classpath)
     } yield methodsFromSource(sparkSource, filterOverlay = false, module.hierarchy, name, scalaVersion)
 
   def generateSparkGroupedMethods: ZIO[Environment, CodegenError, Map[MethodType, Seq[Method]]] =

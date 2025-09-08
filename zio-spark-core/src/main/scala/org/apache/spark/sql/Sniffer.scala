@@ -7,11 +7,13 @@ package org.apache.spark.sql
 object Sniffer {
 
   /** Backdoor for showString private function. */
-  def datasetShowString[T](dataset: Dataset[T], _numRows: Int, truncate: Int): String = {
+  def datasetShowString[T](dataset: Dataset[T], _numRows: Int, truncate: Int): String =
     try {
       // Try the new Spark 4 signature first
       val method = dataset.getClass.getMethod("showString", classOf[Int], classOf[Int], classOf[Boolean])
-      method.invoke(dataset, _numRows.asInstanceOf[AnyRef], truncate.asInstanceOf[AnyRef], false.asInstanceOf[AnyRef]).asInstanceOf[String]
+      method
+        .invoke(dataset, _numRows.asInstanceOf[AnyRef], truncate.asInstanceOf[AnyRef], false.asInstanceOf[AnyRef])
+        .asInstanceOf[String]
     } catch {
       case _: NoSuchMethodException =>
         try {
@@ -21,8 +23,8 @@ object Sniffer {
         } catch {
           case _: Exception =>
             // Ultimate fallback - redirect show() output to capture it
-            val baos = new java.io.ByteArrayOutputStream()
-            val ps = new java.io.PrintStream(baos)
+            val baos        = new java.io.ByteArrayOutputStream()
+            val ps          = new java.io.PrintStream(baos)
             val originalOut = System.out
             try {
               System.setOut(ps)
@@ -35,5 +37,4 @@ object Sniffer {
             }
         }
     }
-  }
 }

@@ -1,4 +1,5 @@
 import sbt.Defaults
+import sbt.Keys.{libraryDependencies, name}
 
 val IntegrationTestConfig = config("it").extend(Test)
 
@@ -135,7 +136,7 @@ lazy val root =
       exampleUsingOlderSparkVersion,
       exampleWordCount,
       exampleZparkio,
-      exampleZIOEcosystem,
+      exampleZIOEcosystem
     )
 
 lazy val core =
@@ -187,20 +188,98 @@ lazy val test =
     )
     .dependsOn(core)
 
-def example(project: Project): Project =
-  project
-    .dependsOn(core)
+lazy val exampleSimpleApp =
+  (project in file("examples/simple-app"))
+    .settings(
+      name         := "simple-app",
+      scalaVersion := "2.13.16"
+    )
     .settings(noPublishingSettings)
+    .settings(
+      libraryDependencies ++= Seq(
+        "org.apache.spark" %% "spark-core" % sparkVersion,
+        "org.apache.spark" %% "spark-sql"  % sparkVersion
+      )
+    )
+    .dependsOn(core)
 
-lazy val exampleSimpleApp              = (project in file("examples/simple-app")).configure(example)
-lazy val exampleSparkCodeMigration     = (project in file("examples/spark-code-migration")).configure(example)
-lazy val exampleUsingOlderSparkVersion = (project in file("examples/using-older-spark-version")).configure(example)
-lazy val exampleWordCount              = (project in file("examples/word-count")).configure(example)
-lazy val exampleZparkio                = (project in file("examples/zparkio")).configure(example)
+lazy val exampleSparkCodeMigration =
+  (project in file("examples/spark-code-migration"))
+    .settings(
+      name         := "spark-code-migration",
+      scalaVersion := "2.13.16"
+    )
+    .settings(noPublishingSettings)
+    .settings(
+      libraryDependencies ++= Seq(
+        "org.apache.spark" %% "spark-core" % sparkVersion,
+        "org.apache.spark" %% "spark-sql"  % sparkVersion
+      )
+    )
+    .dependsOn(core)
+
+lazy val exampleUsingOlderSparkVersion =
+  (project in file("examples/using-older-spark-version"))
+    .settings(
+      name         := "using-older-spark-version",
+      scalaVersion := "2.13.16"
+    )
+    .settings(noPublishingSettings)
+    .settings(
+      libraryDependencies ++= Seq(
+        "org.apache.spark" %% "spark-core" % "3.2.4",
+        "org.apache.spark" %% "spark-sql"  % "3.2.4"
+      )
+    )
+    .dependsOn(core)
+
+lazy val exampleWordCount =
+  (project in file("examples/word-count"))
+    .settings(
+      name         := "word-count",
+      scalaVersion := "2.13.16"
+    )
+    .settings(noPublishingSettings)
+    .settings(
+      libraryDependencies ++= Seq(
+        "org.apache.spark" %% "spark-core" % sparkVersion,
+        "org.apache.spark" %% "spark-sql"  % sparkVersion
+      )
+    )
+    .dependsOn(core)
+
+lazy val exampleZparkio =
+  (project in file("examples/zparkio"))
+    .settings(
+      name         := "zparkio-comparaison",
+      scalaVersion := "2.13.16"
+    )
+    .settings(noPublishingSettings)
+    .settings(
+      libraryDependencies ++= Seq(
+        "org.apache.spark" %% "spark-core"  % sparkVersion,
+        "org.apache.spark" %% "spark-sql"   % sparkVersion,
+        "dev.zio"          %% "zio-logging" % "2.5.1"
+      )
+    )
+    .dependsOn(core)
+
 lazy val exampleZIOEcosystem =
   (project in file("examples/zio-ecosystem"))
-    .configure(example)
+    .settings(
+      name         := "zio-ecosystem",
+      scalaVersion := "2.13.16"
+    )
+    .settings(noPublishingSettings)
+    .settings(
+      libraryDependencies ++= Seq(
+        "org.apache.spark" %% "spark-core" % sparkVersion,
+        "org.apache.spark" %% "spark-sql"  % sparkVersion,
+        "dev.zio"          %% "zio-cli"    % "0.7.3"
+      )
+    )
     .dependsOn(
+      core,
       exampleSimpleApp,
       exampleSparkCodeMigration,
       exampleWordCount

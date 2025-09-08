@@ -1,0 +1,85 @@
+[info] running example.SimpleApp
+Using Spark's default log4j profile: org/apache/spark/log4j2-defaults.properties
+25/09/08 17:54:37 INFO SparkContext: Running Spark version 3.5.6
+25/09/08 17:54:37 INFO SparkContext: OS info Mac OS X, 15.6.1, aarch64
+25/09/08 17:54:37 INFO SparkContext: Java version 21.0.8
+25/09/08 17:54:37 WARN NativeCodeLoader: Unable to load native-hadoop library for your platform... using builtin-java classes where applicable
+25/09/08 17:54:37 INFO ResourceUtils: ==============================================================
+25/09/08 17:54:37 INFO ResourceUtils: No custom resources configured for spark.driver.
+25/09/08 17:54:37 INFO ResourceUtils: ==============================================================
+25/09/08 17:54:37 INFO SparkContext: Submitted application: app
+25/09/08 17:54:37 INFO ResourceProfile: Default ResourceProfile created, executor resources: Map(cores -> name: cores, amount: 1, script: , vendor: , memory -> name: memory, amount: 1024, script: , vendor: , offHeap -> name: offHeap, amount: 0, script: , vendor: ), task resources: Map(cpus -> name: cpus, amount: 1.0)
+25/09/08 17:54:37 INFO ResourceProfile: Limiting resource is cpu
+25/09/08 17:54:37 INFO ResourceProfileManager: Added ResourceProfile id: 0
+25/09/08 17:54:37 INFO SecurityManager: Changing view acls to: jules
+25/09/08 17:54:37 INFO SecurityManager: Changing modify acls to: jules
+25/09/08 17:54:37 INFO SecurityManager: Changing view acls groups to:
+25/09/08 17:54:37 INFO SecurityManager: Changing modify acls groups to:
+25/09/08 17:54:37 INFO SecurityManager: SecurityManager: authentication disabled; ui acls disabled; users with view permissions: jules; groups with view permissions: EMPTY; users with modify permissions: jules; groups with modify permissions: EMPTY
+25/09/08 17:54:37 INFO Utils: Successfully started service 'sparkDriver' on port 54903.
+25/09/08 17:54:37 INFO SparkEnv: Registering MapOutputTracker
+25/09/08 17:54:37 INFO SparkEnv: Registering BlockManagerMaster
+25/09/08 17:54:37 INFO BlockManagerMasterEndpoint: Using org.apache.spark.storage.DefaultTopologyMapper for getting topology information
+25/09/08 17:54:37 INFO BlockManagerMasterEndpoint: BlockManagerMasterEndpoint up
+25/09/08 17:54:37 INFO SparkEnv: Registering BlockManagerMasterHeartbeat
+25/09/08 17:54:37 INFO DiskBlockManager: Created local directory at /private/var/folders/h4/mdhgy17j0f7frp8g_t44yh700000gp/T/blockmgr-34c4d6ab-2bcf-4755-9945-fbeaf741b3ad
+25/09/08 17:54:37 INFO MemoryStore: MemoryStore started with capacity 3.4 GiB
+25/09/08 17:54:37 INFO SparkEnv: Registering OutputCommitCoordinator
+25/09/08 17:54:37 INFO JettyUtils: Start Jetty 0.0.0.0:4040 for SparkUI
+25/09/08 17:54:38 INFO Utils: Successfully started service 'SparkUI' on port 4040.
+25/09/08 17:54:38 INFO Executor: Starting executor ID driver on host mac.modem
+25/09/08 17:54:38 INFO Executor: OS info Mac OS X, 15.6.1, aarch64
+25/09/08 17:54:38 INFO Executor: Java version 21.0.8
+25/09/08 17:54:38 INFO Executor: Starting executor with user classpath (userClassPathFirst = false): ''
+25/09/08 17:54:38 INFO Executor: Created or updated repl class loader org.apache.spark.util.MutableURLClassLoader@21092b8 for default.
+25/09/08 17:54:38 INFO Utils: Successfully started service 'org.apache.spark.network.netty.NettyBlockTransferService' on port 54905.
+25/09/08 17:54:38 INFO NettyBlockTransferService: Server created on mac.modem:54905
+25/09/08 17:54:38 INFO BlockManager: Using org.apache.spark.storage.RandomBlockReplicationPolicy for block replication policy
+25/09/08 17:54:38 INFO BlockManagerMaster: Registering BlockManager BlockManagerId(driver, mac.modem, 54905, None)
+25/09/08 17:54:38 INFO BlockManagerMasterEndpoint: Registering block manager mac.modem:54905 with 3.4 GiB RAM, BlockManagerId(driver, mac.modem, 54905, None)
+25/09/08 17:54:38 INFO BlockManagerMaster: Registered BlockManager BlockManagerId(driver, mac.modem, 54905, None)
+25/09/08 17:54:38 INFO BlockManager: Initialized BlockManager: BlockManagerId(driver, mac.modem, 54905, None)
+25/09/08 17:54:38 INFO SharedState: Setting hive.metastore.warehouse.dir ('null') to the value of spark.sql.warehouse.dir.
+25/09/08 17:54:38 INFO SharedState: Warehouse path is 'file:/Users/jules/jules_ivanic/workspace/zio-spark/spark-warehouse'.
+25/09/08 17:54:39 INFO InMemoryFileIndex: It took 34 ms to list leaf files for 1 paths.
+25/09/08 17:54:40 INFO FileSourceStrategy: Pushed Filters:
+25/09/08 17:54:41 INFO FileSourceStrategy: Post-Scan Filters:
+25/09/08 17:54:41 INFO MemoryStore: Block broadcast_0 stored as values in memory (estimated size 712.0 B, free 3.4 GiB)
+25/09/08 17:54:41 INFO MemoryStore: Block broadcast_0_piece0 stored as bytes in memory (estimated size 34.1 KiB, free 3.4 GiB)
+25/09/08 17:54:41 INFO BlockManagerInfo: Added broadcast_0_piece0 in memory on mac.modem:54905 (size: 34.1 KiB, free: 3.4 GiB)
+25/09/08 17:54:41 INFO SparkContext: Created broadcast 0 from head at Dataset.scala:188
+25/09/08 17:54:41 INFO FileSourceScanExec: Planning scan with bin packing, max size: 4194304 bytes, open cost is considered as scanning 4194304 bytes.
+25/09/08 17:54:41 INFO SparkContext: Starting job: head at Dataset.scala:188
+25/09/08 17:54:41 INFO DAGScheduler: Got job 0 (head at Dataset.scala:188) with 1 output partitions
+25/09/08 17:54:41 INFO DAGScheduler: Final stage: ResultStage 0 (head at Dataset.scala:188)
+25/09/08 17:54:41 INFO DAGScheduler: Parents of final stage: List()
+25/09/08 17:54:41 INFO DAGScheduler: Missing parents: List()
+25/09/08 17:54:41 INFO DAGScheduler: Submitting ResultStage 0 (MapPartitionsRDD[2] at head at Dataset.scala:188), which has no missing parents
+25/09/08 17:54:41 INFO MemoryStore: Block broadcast_1 stored as values in memory (estimated size 12.1 KiB, free 3.4 GiB)
+25/09/08 17:54:41 INFO MemoryStore: Block broadcast_1_piece0 stored as bytes in memory (estimated size 6.2 KiB, free 3.4 GiB)
+25/09/08 17:54:41 INFO BlockManagerInfo: Added broadcast_1_piece0 in memory on mac.modem:54905 (size: 6.2 KiB, free: 3.4 GiB)
+25/09/08 17:54:41 INFO SparkContext: Created broadcast 1 from broadcast at DAGScheduler.scala:1611
+25/09/08 17:54:41 INFO DAGScheduler: Submitting 1 missing tasks from ResultStage 0 (MapPartitionsRDD[2] at head at Dataset.scala:188) (first 15 tasks are for partitions Vector(0))
+25/09/08 17:54:41 INFO TaskSchedulerImpl: Adding task set 0.0 with 1 tasks resource profile 0
+25/09/08 17:54:41 INFO TaskSetManager: Starting task 0.0 in stage 0.0 (TID 0) (mac.modem, executor driver, partition 0, PROCESS_LOCAL, 9742 bytes)
+25/09/08 17:54:41 INFO Executor: Running task 0.0 in stage 0.0 (TID 0)
+25/09/08 17:54:41 INFO FileScanRDD: Reading File path: file:///Users/jules/jules_ivanic/workspace/zio-spark/examples/simple-app/src/main/resources/data.csv, range: 0-47, partition values: [empty row]
+25/09/08 17:54:41 INFO CodeGenerator: Code generated in 140.500833 ms
+25/09/08 17:54:42 INFO Executor: Finished task 0.0 in stage 0.0 (TID 0). 1584 bytes result sent to driver
+25/09/08 17:54:42 INFO TaskSetManager: Finished task 0.0 in stage 0.0 (TID 0) in 385 ms on mac.modem (executor driver) (1/1)
+25/09/08 17:54:42 INFO TaskSchedulerImpl: Removed TaskSet 0.0, whose tasks have all completed, from pool
+25/09/08 17:54:42 INFO DAGScheduler: ResultStage 0 (head at Dataset.scala:188) finished in 0.469 s
+25/09/08 17:54:42 INFO DAGScheduler: Job 0 is finished. Cancelling potential speculative or zombie tasks for this job
+25/09/08 17:54:42 INFO TaskSchedulerImpl: Killing all running tasks in stage 0: Stage finished
+25/09/08 17:54:42 INFO DAGScheduler: Job 0 finished: head at Dataset.scala:188, took 0.509735 s
+25/09/08 17:54:42 INFO CodeGenerator: Code generated in 12.846875 ms
+The first person's name is Maria.
+25/09/08 17:54:42 INFO SparkContext: SparkContext is stopping with exitCode 0.
+25/09/08 17:54:42 INFO SparkUI: Stopped Spark web UI at http://mac.modem:4040
+25/09/08 17:54:42 INFO MapOutputTrackerMasterEndpoint: MapOutputTrackerMasterEndpoint stopped!
+25/09/08 17:54:42 INFO MemoryStore: MemoryStore cleared
+25/09/08 17:54:42 INFO BlockManager: BlockManager stopped
+25/09/08 17:54:42 INFO BlockManagerMaster: BlockManagerMaster stopped
+25/09/08 17:54:42 INFO OutputCommitCoordinator$OutputCommitCoordinatorEndpoint: OutputCommitCoordinator stopped!
+25/09/08 17:54:42 INFO SparkContext: Successfully stopped SparkContext
+[success] Total time: 14 s, completed 8 Sept 2025, 5:54:42 pm
