@@ -1,6 +1,5 @@
 package zio.spark.codegen
 
-import sbt.Keys.Classpath
 import sbt.internal.util.Attributed
 
 import zio.{ZIO, ZLayer}
@@ -13,11 +12,16 @@ import java.io.File
 import java.net.URLClassLoader
 
 object Helpers {
+  type Classpath = Array[sbt.internal.util.Attributed[java.io.File]]
+  object Classpath {
+    def empty: Classpath = Array.empty
+  }
+
   // getClassLoader when running test, instead of using information from sbt
   def classLoaderToClasspath(classLoader: ClassLoader): Classpath =
     classLoader match {
       case classLoader: URLClassLoader => classLoader.getURLs.map(_.getFile).map(x => Attributed.blank(new File(x)))
-      case _                           => Seq.empty
+      case _                           => Classpath.empty
     }
 
   // find a method coming from Spark sources.

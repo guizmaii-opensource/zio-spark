@@ -22,7 +22,7 @@ case object SparkContextTemplate extends Template.Default {
         |import org.apache.spark.input.PortableDataStream
         |import org.apache.spark.scheduler.SchedulingMode.SchedulingMode
         |import org.apache.spark.util._
-        |import org.apache.spark.{SimpleFutureAction, SparkConf, SparkStatusTracker, TaskContext, SparkContext => UnderlyingSparkContext}
+        |import org.apache.spark.{SimpleFutureAction, SparkConf, SparkStatusTracker, TaskContext, SparkContext => UnderlyingSparkContext, ReadOnlySparkConf}
         |import org.apache.spark.rdd.{RDD => UnderlyingRDD}
         |
         |import scala.reflect.ClassTag

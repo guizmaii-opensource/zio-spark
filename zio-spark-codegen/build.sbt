@@ -38,7 +38,7 @@ lazy val plugin =
           .exclude("org.scala-lang.modules", "scala-parser-combinators_2.13")
           .exclude("org.scala-lang.modules", "scala-parallel-collections_2.13"),
         // Explicitly use Scala 3 versions to avoid conflicts
-        "org.scala-lang.modules" %% "scala-xml" % "2.3.0",
+        "org.scala-lang.modules" %% "scala-xml" % "2.4.0",
         "org.scala-lang.modules" %% "scala-parser-combinators" % "2.4.0",
         "org.scala-lang.modules" %% "scala-parallel-collections" % "1.1.0"
       ),

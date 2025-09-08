@@ -14,7 +14,8 @@ case object DatasetTemplate extends Template.Default {
 
   override def imports(scalaVersion: ScalaBinaryVersion): Option[String] =
     Some {
-      """import org.apache.spark.sql.{
+      """import org.apache.spark.sql
+        |import org.apache.spark.sql.{
         |  Column,
         |  Dataset => UnderlyingDataset,
         |  DataFrameNaFunctions => UnderlyingDataFrameNaFunctions,
@@ -24,7 +25,8 @@ case object DatasetTemplate extends Template.Default {
         |  Encoder,
         |  Row,
         |  TypedColumn,
-        |  Sniffer
+        |  Sniffer,
+        |  MergeIntoWriter,
         |}
         |import zio.spark.sql.streaming.DataStreamWriter
         |import org.apache.spark.sql.types.StructType
@@ -36,6 +38,7 @@ case object DatasetTemplate extends Template.Default {
         |import scala.reflect.runtime.universe.TypeTag
         |
         |import java.io.IOException
+        |import java.{util}
         |import org.apache.spark.sql.execution.ExplainMode
         |import org.apache.spark.sql.Observation
         |import org.apache.spark.sql.types.Metadata
@@ -65,6 +68,7 @@ case object DatasetTemplate extends Template.Default {
 
     method.name match {
       case "apply"                           => Ignored
+      case "asTable"                         => Ignored
       case "drop"                            => Transformation
       case "col" | "colRegex" | "withColumn" => baseMethodType.withAnalysis
       case _                                 => baseMethodType

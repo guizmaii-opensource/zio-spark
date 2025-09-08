@@ -36,17 +36,56 @@ object Helpers {
   def collectFunctionsFromTemplate(template: TemplateWithComments): Seq[Defn.Def] =
     template.stats.collect { case d: Defn.Def if checkMods(d.mods) => d }
 
-  def getTemplateFromSourceOverlay(source: Source): TemplateWithComments =
-    new TemplateWithComments(source.children.collectFirst { case c: Defn.Class => c.templ }.get, true)
+  def getTemplateFromSourceOverlay(source: Source): TemplateWithComments = {
+    val template = source.children.collectFirst { case c: Defn.Class => c.templ }
+      .orElse(source.children.flatMap(_.children).collectFirst { case c: Defn.Class => c.templ })
+    
+    template match {
+      case Some(templ) => new TemplateWithComments(templ, true)
+      case None => throw new RuntimeException(s"Could not find class definition in source overlay")
+    }
+  }
 
-  def getTemplateFromSource(source: Source): TemplateWithComments =
+  def getTemplateFromSource(source: Source): TemplateWithComments = {
     new TemplateWithComments(
       source.children
-        .flatMap(_.children)
+        .flatMap(_.children)  // First level: look for class directly in children
         .collectFirst { case c: Defn.Class => c.templ }
-        .get,
+        .orElse(source.children.collectFirst { case c: Defn.Class => c.templ })  // Second level: look at top level
+        .orElse {
+          // Third level: Handle Spark 4 structure - look deeper into package structure
+          source.children.flatMap { child =>
+            child match {
+              case pkg: Pkg => 
+                // Look in package stats for classes
+                pkg.stats.collectFirst { case c: Defn.Class => c.templ }
+                  .orElse {
+                    // Look deeper - sometimes classes are nested further
+                    pkg.stats.flatMap {
+                      case nestedPkg: Pkg => nestedPkg.stats.collectFirst { case c: Defn.Class => c.templ }
+                      case other => other.children.collectFirst { case c: Defn.Class => c.templ }
+                    }.headOption
+                  }
+              case _ => 
+                // For non-package nodes, search recursively through all children
+                def deepSearch(tree: Tree): Option[Template] = {
+                  tree match {
+                    case c: Defn.Class => Some(c.templ)
+                    case _ => tree.children.flatMap(deepSearch).headOption
+                  }
+                }
+                deepSearch(child)
+            }
+          }.headOption
+        }
+        .getOrElse {
+          val allTypes = source.children.map(_.getClass.getSimpleName)
+          val nestedTypes = source.children.flatMap(_.children).map(_.getClass.getSimpleName)
+          throw new RuntimeException(s"Could not find class definition in source. Top-level: [${allTypes.mkString(", ")}]. Nested: [${nestedTypes.mkString(", ")}]")
+        },
       false
     )
+  }
 
   def methodsFromSource(
       source: Source,
