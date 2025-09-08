@@ -15,7 +15,10 @@ object UsingOlderSparkVersion extends ZIOSparkAppDefault {
 
   final case class Person(name: String, age: Int)
 
-  val filePath: String = "examples/using-older-spark-version/src/main/resources/data.csv"
+  val filePath: String = {
+    val url = this.getClass.getClassLoader.getResource("data.csv")
+    Path.of(url.toURI).toFile.getAbsolutePath
+  }
 
   def read: SIO[DataFrame] = SparkSession.read.inferSchema.withHeader.withDelimiter(";").csv(filePath)
 
@@ -30,7 +33,7 @@ object UsingOlderSparkVersion extends ZIOSparkAppDefault {
       maybePeople <- pipeline.run
       _ <-
         maybePeople match {
-          case None    => Console.printLine("There is nobody :(.")
+          case None => Console.printLine("There is nobody :(.")
           case Some(p) => Console.printLine(s"The first person's name is ${p.name}.")
         }
     } yield ()
