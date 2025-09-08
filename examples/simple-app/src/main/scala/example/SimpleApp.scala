@@ -8,26 +8,15 @@ import zio.spark.parameter._
 import zio.spark.sql._
 import zio.spark.sql.implicits._
 
-import java.nio.file.{Path, Paths}
-
 object SimpleApp extends ZIOSparkAppDefault {
 
   import zio.spark.sql.TryAnalysis.syntax.throwAnalysisException
 
   final case class Person(name: String, age: Int)
 
-  def resourcePath(fileName: String): Path = {
-    val url = this.getClass.getClassLoader.getResource(fileName)
-    println(s"Resource URL: $url")
-    println(s"Resource URI: ${url.toURI}")
-    println(s"Resource URI getPath: ${url.toURI.getPath}")
-    println(s"Resource URI getRawPath: ${url.toURI.getRawPath}")
-    Paths.get(this.getClass.getClassLoader.getResource(fileName).toURI)
-  }
-
   private val readfilePath: Task[String] =
     ZIO.attempt {
-      resourcePath("data.csv").toFile.getAbsolutePath
+      this.getClass.getClassLoader.getResource("data.csv").toString
     }
 
   def read(filePath: String): SIO[DataFrame] = SparkSession.read.schema[Person].withHeader.withDelimiter(";").csv(filePath)
