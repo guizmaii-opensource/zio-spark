@@ -119,6 +119,25 @@ lazy val supportedScalaVersions = List(scala213, scala3)
 lazy val scalaMajorVersion: SettingKey[Long] = SettingKey("scala major version")
 lazy val scalaMinorVersion: SettingKey[Long] = SettingKey("scala minor version")
 
+lazy val root =
+  (project in file("."))
+    .settings(name := "zio-spark-root")
+    .settings(crossScalaVersions := Nil)
+    .settings(crossScalaVersionSettings)
+    .settings(commonSettings)
+    .settings(noPublishingSettings)
+    .aggregate(
+      core,
+      coreTests,
+      test,
+      exampleSimpleApp,
+      exampleSparkCodeMigration,
+      exampleUsingOlderSparkVersion,
+      exampleWordCount,
+      exampleZparkio,
+      exampleZIOEcosystem,
+    )
+
 lazy val core =
   (project in file("zio-spark-core"))
     .configs(IntegrationTestConfig)
@@ -185,20 +204,6 @@ lazy val exampleZIOEcosystem =
       exampleSimpleApp,
       exampleSparkCodeMigration,
       exampleWordCount
-    )
-
-lazy val examples =
-  (project in file("examples"))
-    .settings(name := "examples")
-    .settings(noPublishingSettings)
-    .settings(crossScalaVersions := Nil)
-    .aggregate(
-      exampleSimpleApp,
-      exampleSparkCodeMigration,
-      exampleUsingOlderSparkVersion,
-      exampleWordCount,
-      exampleZparkio,
-      exampleZIOEcosystem
     )
 
 /** Generates required libraries for magnolia. */

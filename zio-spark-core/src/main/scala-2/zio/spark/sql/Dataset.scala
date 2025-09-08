@@ -373,19 +373,19 @@ final case class Dataset[T](underlying: UnderlyingDataset[T]) { self =>
   /** @inheritdoc */
   def drop(col: Column, cols: Column*): DataFrame = transformation(_.drop(col, cols: _*))
 
-  // - Java compatibility . The java compiler uses the byte code signatures,
-  // - Retain the old signatures for binary compatibility;
-  //   scattered across the interface and implementation. `drop` and `select`
-  ////////////////////////////////////////////////////////////////////////////
-  /** @inheritdoc */
-  // of the interface. This is done for a couple of reasons:
   // Return type overrides to make sure we return the implementation instead
+  //   scattered across the interface and implementation. `drop` and `select`
   // - Scala method resolution runs into problems when the ambiguous methods are
-  //   This causes issues when the java code tries to materialize results, or
   ////////////////////////////////////////////////////////////////////////////
+  // - Java compatibility . The java compiler uses the byte code signatures,
+  //   This causes issues when the java code tries to materialize results, or
+  /** @inheritdoc */
+  //   suffered from this.
+  ////////////////////////////////////////////////////////////////////////////
+  // - Retain the old signatures for binary compatibility;
   //   and those would point to api.Dataset being returned instead of Dataset.
   //   tries to use functionality that is implementation specfic.
-  //   suffered from this.
+  // of the interface. This is done for a couple of reasons:
   def drop(colName: String): DataFrame = transformation(_.drop(colName))
 
   /** @inheritdoc */
