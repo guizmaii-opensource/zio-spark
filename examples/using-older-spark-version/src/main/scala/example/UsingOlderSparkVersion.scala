@@ -15,26 +15,19 @@ object UsingOlderSparkVersion extends ZIOSparkAppDefault {
 
   final case class Person(name: String, age: Int)
 
-  def resourcePath(fileName: String): Path = Paths.get(this.getClass.getClassLoader.getResource(fileName).toURI)
+  private val filePath: String = "src/main/resources/data.csv"
 
-  private val readfilePath: Task[String] =
-    ZIO.attempt {
-      resourcePath("data.csv").toFile.getAbsolutePath
-    }
-
-  def read(filePath: String): SIO[DataFrame] = SparkSession.read.inferSchema.withHeader.withDelimiter(";").csv(filePath)
+  def read: SIO[DataFrame] = SparkSession.read.inferSchema.withHeader.withDelimiter(";").csv(filePath)
 
   def transform(inputDs: DataFrame): Dataset[Person] = inputDs.as[Person]
 
   def output(transformedDs: Dataset[Person]): Task[Option[Person]] = transformedDs.headOption
 
-  def pipeline(filePath: String): Pipeline[Row, Person, Option[Person]] = experimental.Pipeline(read(filePath), transform, output)
+  def pipeline: Pipeline[Row, Person, Option[Person]] = experimental.Pipeline(read, transform, output)
 
   val job: ZIO[SparkSession, Throwable, Unit] =
     for {
-      filePath <- readfilePath
-      _ <- ZIO.debug(s"File path: $filePath")
-      maybePeople <- pipeline(filePath).run
+      maybePeople <- pipeline.run
       _ <-
         maybePeople match {
           case None => Console.printLine("There is nobody :(.")
