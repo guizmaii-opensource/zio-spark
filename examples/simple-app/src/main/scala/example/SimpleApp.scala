@@ -1,6 +1,7 @@
 package example
 
 import org.apache.spark.sql.Row
+
 import zio._
 import zio.spark.experimental
 import zio.spark.experimental.{Pipeline, ZIOSparkAppDefault}
@@ -29,7 +30,7 @@ object SimpleApp extends ZIOSparkAppDefault {
       maybePeople <- pipeline.run
       _ <-
         maybePeople match {
-          case None => Console.printLine("There is nobody :(.")
+          case None    => Console.printLine("There is nobody :(.")
           case Some(p) => Console.printLine(s"The first person's name is ${p.name}.")
         }
     } yield ()

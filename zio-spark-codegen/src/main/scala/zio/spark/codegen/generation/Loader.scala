@@ -37,7 +37,7 @@ object Loader {
                 // Handle virtual file references with placeholders
                 val defaultCoursierCache = {
                   val userHome = scala.util.Properties.userHome
-                  val osName = scala.util.Properties.osName.toLowerCase
+                  val osName   = scala.util.Properties.osName.toLowerCase
                   if (osName.contains("mac")) {
                     s"$userHome/Library/Caches/Coursier/v1"
                   } else if (osName.contains("win")) {
@@ -50,7 +50,7 @@ object Loader {
                     s"$userHome/.cache/coursier/v1"
                   }
                 }
-                
+
                 val coursierCache =
                   scala.sys.props
                     .get("coursier.cache")
@@ -65,25 +65,26 @@ object Loader {
               case _: Exception =>
                 // Fallback: try common coursier locations
                 val userHome = scala.util.Properties.userHome
-                val osName = scala.util.Properties.osName.toLowerCase
-                val possiblePaths = if (osName.contains("mac")) {
-                  Seq(
-                    s"$userHome/Library/Caches/Coursier/v1",
-                    s"$userHome/.coursier/cache/v1" // Legacy location
-                  )
-                } else if (osName.contains("win")) {
-                  val localAppData = Option(System.getenv("LOCALAPPDATA")).getOrElse(s"$userHome\\AppData\\Local")
-                  Seq(
-                    s"$localAppData\\Coursier\\Cache\\v1",
-                    s"$userHome\\.coursier\\cache\\v1" // Legacy location
-                  )
-                } else {
-                  // Linux and other Unix-like systems
-                  Seq(
-                    s"$userHome/.cache/coursier/v1",
-                    s"$userHome/.coursier/cache/v1" // Legacy location
-                  )
-                }
+                val osName   = scala.util.Properties.osName.toLowerCase
+                val possiblePaths =
+                  if (osName.contains("mac")) {
+                    Seq(
+                      s"$userHome/Library/Caches/Coursier/v1",
+                      s"$userHome/.coursier/cache/v1" // Legacy location
+                    )
+                  } else if (osName.contains("win")) {
+                    val localAppData = Option(System.getenv("LOCALAPPDATA")).getOrElse(s"$userHome\\AppData\\Local")
+                    Seq(
+                      s"$localAppData\\Coursier\\Cache\\v1",
+                      s"$userHome\\.coursier\\cache\\v1" // Legacy location
+                    )
+                  } else {
+                    // Linux and other Unix-like systems
+                    Seq(
+                      s"$userHome/.cache/coursier/v1",
+                      s"$userHome/.coursier/cache/v1" // Legacy location
+                    )
+                  }
 
                 val jarPath     = f.id.replace("${CSR_CACHE}", "")
                 val sourcesPath = jarPath.replaceFirst("\\.jar$", "-sources.jar")
