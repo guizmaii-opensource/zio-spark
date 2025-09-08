@@ -16,22 +16,24 @@ object SimpleApp extends ZIOSparkAppDefault {
 
   final case class Person(name: String, age: Int)
 
-  val filePath: String = {
-    val url = this.getClass.getClassLoader.getResource("data.csv")
-    Path.of(url.toURI).toFile.getAbsolutePath
-  }
+  private val readfilePath: Task[String] =
+    ZIO.attempt {
+      val url = this.getClass.getClassLoader.getResource("data.csv")
+      Path.of(url.toURI).toFile.getAbsolutePath
+    }
 
-  def read: SIO[DataFrame] = SparkSession.read.schema[Person].withHeader.withDelimiter(";").csv(filePath)
+  def read(filePath: String): SIO[DataFrame] = SparkSession.read.schema[Person].withHeader.withDelimiter(";").csv(filePath)
 
   def transform(inputDs: DataFrame): Dataset[Person] = inputDs.as[Person]
 
   def output(transformedDs: Dataset[Person]): Task[Option[Person]] = transformedDs.headOption
 
-  val pipeline: Pipeline[Row, Person, Option[Person]] = experimental.Pipeline(read, transform, output)
+  def pipeline(filePath: String): Pipeline[Row, Person, Option[Person]] = experimental.Pipeline(read(filePath), transform, output)
 
   val job: ZIO[SparkSession, Throwable, Unit] =
     for {
-      maybePeople <- pipeline.run
+      filePath <- readfilePath
+      maybePeople <- pipeline(filePath).run
       _ <-
         maybePeople match {
           case None => Console.printLine("There is nobody :(.")
