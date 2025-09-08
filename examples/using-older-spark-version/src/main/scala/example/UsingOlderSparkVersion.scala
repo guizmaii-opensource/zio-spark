@@ -15,10 +15,11 @@ object UsingOlderSparkVersion extends ZIOSparkAppDefault {
 
   final case class Person(name: String, age: Int)
 
+  def resourcePath(fileName: String): Path = Paths.get(this.getClass.getClassLoader.getResource(fileName).toURI)
+
   private val readfilePath: Task[String] =
     ZIO.attempt {
-      val url = this.getClass.getClassLoader.getResource("data.csv")
-      Path.of(url.toURI).toFile.getAbsolutePath
+      resourcePath("data.csv").toFile.getAbsolutePath
     }
 
   def read(filePath: String): SIO[DataFrame] = SparkSession.read.inferSchema.withHeader.withDelimiter(";").csv(filePath)
