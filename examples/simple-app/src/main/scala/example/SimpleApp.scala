@@ -20,7 +20,7 @@ object SimpleApp extends ZIOSparkAppDefault {
 
   private val readfilePath: Task[String] =
     ZIO.attempt {
-      resourcePath("data.csv").toFile.getAbsolutePath
+      resourcePath("/data.csv").toFile.getAbsolutePath
     }
 
   def read(filePath: String): SIO[DataFrame] = SparkSession.read.schema[Person].withHeader.withDelimiter(";").csv(filePath)
