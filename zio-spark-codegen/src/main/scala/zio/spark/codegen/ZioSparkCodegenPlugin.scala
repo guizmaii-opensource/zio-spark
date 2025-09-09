@@ -1,12 +1,18 @@
 package zio.spark.codegen
 
 import org.scalafmt.interfaces.Scalafmt
+import sbt./
 import sbt.{settingKey, AutoPlugin, Compile, Def}
 import sbt.Keys.*
 
 import zio.{ULayer, Unsafe, URLayer, ZIO, ZLayer}
 import zio.spark.codegen.generation.{Generator, Logger, Output}
-import zio.spark.codegen.generation.Environment.{ScalafmtFormatter, ScalafmtFormatterLive, ZIOSparkFolders, ZIOSparkFoldersLive}
+import zio.spark.codegen.generation.Environment.{
+  ScalafmtFormatter,
+  ScalafmtFormatterLive,
+  ZIOSparkFolders,
+  ZIOSparkFoldersLive
+}
 import zio.spark.codegen.generation.plan.Plan
 import zio.spark.codegen.generation.plan.Plan.*
 

@@ -14,7 +14,7 @@ case object KeyValueGroupedDatasetTemplate extends Template.Default {
 
   override def imports(scalaVersion: ScalaBinaryVersion): Option[String] =
     Some {
-      """import org.apache.spark.sql.streaming.{GroupState, GroupStateTimeout, OutputMode}
+      """import org.apache.spark.sql.streaming.{GroupState, GroupStateTimeout, OutputMode, StatefulProcessor, TimeMode, StatefulProcessorWithInitialState}
         |import org.apache.spark.sql.{
         |  Encoder, 
         |  TypedColumn, 
@@ -22,6 +22,7 @@ case object KeyValueGroupedDatasetTemplate extends Template.Default {
         |  KeyValueGroupedDataset => UnderlyingKeyValueGroupedDataset,
         |  Column
         |}
+        |import org.apache.spark.sql
         |""".stripMargin
     }
 

@@ -50,50 +50,30 @@ final case class DataFrameStatFunctions(underlying: UnderlyingDataFrameStatFunct
   def getWithAnalysis[U](f: UnderlyingDataFrameStatFunctions => U): TryAnalysis[U] = TryAnalysis(f(underlying))
 
   // Generated functions coming from spark
-
-  def bloomFilter(colName: String, expectedNumItems: Long, fpp: Double): TryAnalysis[BloomFilter] =
-    getWithAnalysis(_.bloomFilter(colName, expectedNumItems, fpp))
-
-  def bloomFilter(col: Column, expectedNumItems: Long, fpp: Double): TryAnalysis[BloomFilter] =
-    getWithAnalysis(_.bloomFilter(col, expectedNumItems, fpp))
-
-  def bloomFilter(colName: String, expectedNumItems: Long, numBits: Long): TryAnalysis[BloomFilter] =
-    getWithAnalysis(_.bloomFilter(colName, expectedNumItems, numBits))
-
-  def bloomFilter(col: Column, expectedNumItems: Long, numBits: Long): TryAnalysis[BloomFilter] =
-    getWithAnalysis(_.bloomFilter(col, expectedNumItems, numBits))
-
+  /** @inheritdoc */
   def corr(col1: String, col2: String, method: String): TryAnalysis[Double] =
     getWithAnalysis(_.corr(col1, col2, method))
 
-  def corr(col1: String, col2: String): TryAnalysis[Double] = getWithAnalysis(_.corr(col1, col2))
-
-  def countMinSketch(colName: String, depth: Int, width: Int, seed: Int): TryAnalysis[CountMinSketch] =
-    getWithAnalysis(_.countMinSketch(colName, depth, width, seed))
-
-  def countMinSketch(colName: String, eps: Double, confidence: Double, seed: Int): TryAnalysis[CountMinSketch] =
-    getWithAnalysis(_.countMinSketch(colName, eps, confidence, seed))
-
-  def countMinSketch(col: Column, depth: Int, width: Int, seed: Int): TryAnalysis[CountMinSketch] =
-    getWithAnalysis(_.countMinSketch(col, depth, width, seed))
-
-  def countMinSketch(col: Column, eps: Double, confidence: Double, seed: Int): TryAnalysis[CountMinSketch] =
-    getWithAnalysis(_.countMinSketch(col, eps, confidence, seed))
-
+  /** @inheritdoc */
   def cov(col1: String, col2: String): TryAnalysis[Double] = getWithAnalysis(_.cov(col1, col2))
 
   // ===============
 
+  /** @inheritdoc */
   def crosstab(col1: String, col2: String): TryAnalysis[DataFrame] = unpackWithAnalysis(_.crosstab(col1, col2))
 
+  /** @inheritdoc */
   def freqItems(cols: Seq[String], support: Double): TryAnalysis[DataFrame] =
     unpackWithAnalysis(_.freqItems(cols, support))
 
+  /** @inheritdoc */
   def freqItems(cols: Seq[String]): TryAnalysis[DataFrame] = unpackWithAnalysis(_.freqItems(cols))
 
+  /** @inheritdoc */
   def sampleBy[T](col: String, fractions: Map[T, Double], seed: Long): TryAnalysis[DataFrame] =
     unpackWithAnalysis(_.sampleBy[T](col, fractions, seed))
 
+  /** @inheritdoc */
   def sampleBy[T](col: Column, fractions: Map[T, Double], seed: Long): TryAnalysis[DataFrame] =
     unpackWithAnalysis(_.sampleBy[T](col, fractions, seed))
 }

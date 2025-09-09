@@ -60,44 +60,57 @@ final case class RelationalGroupedDataset(underlying: UnderlyingRelationalGroupe
   def getWithAnalysis[U](f: UnderlyingRelationalGroupedDataset => U): TryAnalysis[U] = TryAnalysis(f(underlying))
 
   // Generated functions coming from spark
-
+  /** @inheritdoc */
   def as[K: Encoder, T: Encoder]: TryAnalysis[KeyValueGroupedDataset[K, T]] = getWithAnalysis(_.as[K, T])
 
   // ===============
 
+  /** @inheritdoc */
   def pivot(pivotColumn: String): TryAnalysis[RelationalGroupedDataset] =
     transformationWithAnalysis(_.pivot(pivotColumn))
 
+  /** @inheritdoc */
   def pivot(pivotColumn: String, values: Seq[Any]): TryAnalysis[RelationalGroupedDataset] =
     transformationWithAnalysis(_.pivot(pivotColumn, values))
 
+  /** @inheritdoc */
   def pivot(pivotColumn: Column): TryAnalysis[RelationalGroupedDataset] =
     transformationWithAnalysis(_.pivot(pivotColumn))
 
+  /** @inheritdoc */
   def pivot(pivotColumn: Column, values: Seq[Any]): TryAnalysis[RelationalGroupedDataset] =
     transformationWithAnalysis(_.pivot(pivotColumn, values))
 
   // ===============
 
+  /** @inheritdoc */
   def count: DataFrame = unpack(_.count())
 
   // ===============
 
+  /** @inheritdoc */
   def agg(aggExpr: (String, String), aggExprs: (String, String)*): TryAnalysis[DataFrame] =
     unpackWithAnalysis(_.agg(aggExpr, aggExprs: _*))
 
+  /** @inheritdoc */
   def agg(exprs: Map[String, String]): TryAnalysis[DataFrame] = unpackWithAnalysis(_.agg(exprs))
 
+  /** @inheritdoc */
   def agg(expr: Column, exprs: Column*): TryAnalysis[DataFrame] = unpackWithAnalysis(_.agg(expr, exprs: _*))
 
+  /** @inheritdoc */
   def avg(colNames: String*): TryAnalysis[DataFrame] = unpackWithAnalysis(_.avg(colNames: _*))
 
+  /** @inheritdoc */
   def max(colNames: String*): TryAnalysis[DataFrame] = unpackWithAnalysis(_.max(colNames: _*))
 
+  /** @inheritdoc */
   def mean(colNames: String*): TryAnalysis[DataFrame] = unpackWithAnalysis(_.mean(colNames: _*))
 
+  /** @inheritdoc */
   def min(colNames: String*): TryAnalysis[DataFrame] = unpackWithAnalysis(_.min(colNames: _*))
 
+  /** @inheritdoc */
   def sum(colNames: String*): TryAnalysis[DataFrame] = unpackWithAnalysis(_.sum(colNames: _*))
 
   // ===============

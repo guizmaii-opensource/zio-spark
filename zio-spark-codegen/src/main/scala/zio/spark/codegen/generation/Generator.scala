@@ -14,11 +14,9 @@ case object Generator {
     for {
       outputs <- ZIO.foreachPar(plans)(generate)
       _ <-
-        if (outputs.exists(_.isEmpty)) {
-          ZIO.die(new Throwable("The ZIO Spark generation is canceled because we found errors."))
-        } else {
-          ZIO.unit
-        }
+        ZIO
+          .die(new Throwable("The ZIO Spark generation is canceled because we found errors."))
+          .when(outputs.exists(_.isEmpty))
     } yield outputs.collect { case Some(v) => v }
 
   def write(output: Output): IO[CodegenError, Unit] =

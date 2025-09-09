@@ -3,6 +3,8 @@ package zio.spark.sql
 import magnolia1.{CaseClass, Magnolia}
 import org.apache.spark.sql.types._
 
+import scala.language.experimental.macros
+
 object SchemaFromCaseClass {
 
   trait ToSchema[T] {

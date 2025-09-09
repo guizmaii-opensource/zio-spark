@@ -16,7 +16,7 @@ jobs:
       - uses: actions/setup-java@v4
         with:
           distribution: temurin
-          java-version: 11
+          java-version: 17
           check-latest: true
 
       - name: Download sources
@@ -38,11 +38,11 @@ jobs:
       - uses: actions/setup-java@v4
         with:
           distribution: temurin
-          java-version: 11
+          java-version: 17
           check-latest: true
 
       - name: Run example
-        run: sbt "project example${{ matrix.example }}" run
+        run: sbt "example${{ matrix.example }} / run"
 
   documentation:
     runs-on: ubuntu-latest
@@ -68,7 +68,7 @@ jobs:
       matrix:
         scala: [ "2.13.x", "3.x" ]
         project: [ "coreTests", "test" ]
-        java: [ "11", "17", "21" ]
+        java: [ "17", "21" ]
     steps:
       - uses: actions/checkout@v4
       - uses: sbt/setup-sbt@v1
@@ -81,10 +81,10 @@ jobs:
 
       - name: Run tests
         if: ${{ !startsWith(matrix.scala, '2.13.') || matrix.project != 'coreTests' }}
-        run: sbt ++${{ matrix.scala }} "project ${{ matrix.project }}" testSpecific
+        run: sbt '++${{ matrix.scala }} ${{ matrix.project }}/test'
       - name: Run tests 2.13.X with coverage
         if: ${{ startsWith(matrix.scala, '2.13.') && matrix.project == 'coreTests' }}
-        run: sbt ++${{ matrix.scala }} "project coreTests" testSpecificWithCoverage
+        run: sbt '++${{ matrix.scala }} coreTests/test'
       - name: Publish coverage to codecov
         if: ${{ startsWith(matrix.scala, '2.13.') && matrix.project == 'coreTests' }}
         uses: codecov/codecov-action@v2
@@ -98,7 +98,7 @@ jobs:
       - uses: actions/setup-java@v4
         with:
           distribution: temurin
-          java-version: 11
+          java-version: 17
           check-latest: true
 
       - name: Check formatting and linting
@@ -115,7 +115,7 @@ jobs:
       - uses: actions/setup-java@v4
         with:
           distribution: temurin
-          java-version: 11
+          java-version: 17
           check-latest: true
 
       - name: Run tests for codegen

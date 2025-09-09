@@ -21,20 +21,97 @@ object Loader {
    * We need, in SBT, to download spark with sources.
    */
   private def findSourceJar(moduleName: String, classpath: Classpath): ZIO[Logger, CodegenError, JarFile] = {
-    val maybePath: Option[String] =
+    val maybeFile: Option[File] =
       classpath
         .map(_.data)
         .collectFirst {
-          case f if f.getAbsolutePath.contains(moduleName) =>
-            f.getAbsolutePath.replaceFirst("\\.jar$", "-sources.jar")
+          case f if f.id.contains(moduleName) =>
+            // Try to resolve the actual file path from the virtual file reference
+            try
+              // First try to get the file directly if it's a real file
+              if (f.id.startsWith("/")) {
+                // It's already an absolute path
+                val sourcesPath = f.id.replaceFirst("\\.jar$", "-sources.jar")
+                new File(sourcesPath)
+              } else {
+                // Handle virtual file references with placeholders
+                val defaultCoursierCache = {
+                  val userHome = scala.util.Properties.userHome
+                  val osName   = scala.util.Properties.osName.toLowerCase
+                  if (osName.contains("mac")) {
+                    s"$userHome/Library/Caches/Coursier/v1"
+                  } else if (osName.contains("win")) {
+                    // Windows: use LOCALAPPDATA if available, fallback to user profile
+                    Option(System.getenv("LOCALAPPDATA"))
+                      .map(_ + "\\Coursier\\Cache\\v1")
+                      .getOrElse(s"$userHome\\AppData\\Local\\Coursier\\Cache\\v1")
+                  } else {
+                    // Linux and other Unix-like systems
+                    s"$userHome/.cache/coursier/v1"
+                  }
+                }
+
+                val coursierCache =
+                  scala.sys.props
+                    .get("coursier.cache")
+                    .orElse(Option(System.getenv("COURSIER_CACHE")))
+                    .getOrElse(defaultCoursierCache)
+
+                val resolvedPath = f.id.replace("${CSR_CACHE}", coursierCache)
+                val sourcesPath  = resolvedPath.replaceFirst("\\.jar$", "-sources.jar")
+                new File(sourcesPath)
+              }
+            catch {
+              case _: Exception =>
+                // Fallback: try common coursier locations
+                val userHome = scala.util.Properties.userHome
+                val osName   = scala.util.Properties.osName.toLowerCase
+                val possiblePaths =
+                  if (osName.contains("mac")) {
+                    Seq(
+                      s"$userHome/Library/Caches/Coursier/v1",
+                      s"$userHome/.coursier/cache/v1" // Legacy location
+                    )
+                  } else if (osName.contains("win")) {
+                    val localAppData = Option(System.getenv("LOCALAPPDATA")).getOrElse(s"$userHome\\AppData\\Local")
+                    Seq(
+                      s"$localAppData\\Coursier\\Cache\\v1",
+                      s"$userHome\\.coursier\\cache\\v1" // Legacy location
+                    )
+                  } else {
+                    // Linux and other Unix-like systems
+                    Seq(
+                      s"$userHome/.cache/coursier/v1",
+                      s"$userHome/.coursier/cache/v1" // Legacy location
+                    )
+                  }
+
+                val jarPath     = f.id.replace("${CSR_CACHE}", "")
+                val sourcesPath = jarPath.replaceFirst("\\.jar$", "-sources.jar")
+
+                possiblePaths
+                  .map(cache => new File(cache + sourcesPath))
+                  .find(_.exists())
+                  .getOrElse(new File(f.id.replaceFirst("\\.jar$", "-sources.jar")))
+            }
         }
 
-    maybePath match {
+    maybeFile match {
       case None => ZIO.fail(ModuleNotFoundError(moduleName))
-      case Some(path) =>
-        ZIO
-          .attempt(new JarFile(new File(path)))
-          .orDie
+      case Some(file) =>
+        if (file.exists()) {
+          ZIO
+            .attempt(new JarFile(file))
+            .mapError(e => SourceNotFoundError(file.getAbsolutePath, moduleName, e))
+        } else {
+          ZIO.fail(
+            SourceNotFoundError(
+              file.getAbsolutePath,
+              moduleName,
+              new java.io.FileNotFoundException(s"Source JAR not found: ${file.getAbsolutePath}")
+            )
+          )
+        }
     }
   }
 
@@ -54,11 +131,16 @@ object Loader {
         source <-
           ZIO
             .attempt {
-              val entry: ZipEntry         = jar.getEntry(filePath)
+              val entry: ZipEntry = jar.getEntry(filePath)
+              if (entry == null) {
+                throw new java.io.FileNotFoundException(s"File '$filePath' not found in JAR ${jar.getName}")
+              }
               val stream: InputStream     = jar.getInputStream(entry)
               val content: BufferedSource = Source.fromInputStream(stream)
-
-              content.getLines().mkString("\n").parse[meta.Source].get
+              try
+                content.getLines().mkString("\n").parse[meta.Source].get
+              finally
+                content.close()
             }
             .mapError(SourceNotFoundError(filePath, moduleName, _))
       } yield source

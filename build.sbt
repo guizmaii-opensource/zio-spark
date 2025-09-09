@@ -1,3 +1,8 @@
+import sbt.Defaults
+import sbt.Keys.{libraryDependencies, name}
+
+val IntegrationTestConfig = config("it").extend(Test)
+
 // Common configuration
 inThisBuild(
   List(
@@ -52,10 +57,10 @@ inThisBuild(
 
 Global / onChangedBuildSource := ReloadOnSourceChanges
 
-// Scalafix configuration
-ThisBuild / semanticdbEnabled := true
-ThisBuild / semanticdbVersion := scalafixSemanticdb.revision
-ThisBuild / scalafixDependencies ++= Seq("com.github.vovapolu" %% "scaluzzi" % "0.1.23")
+// Scalafix configuration - disabled for sbt 2 compatibility
+// ThisBuild / semanticdbEnabled := true
+// ThisBuild / semanticdbVersion := "4.9.9"
+// ThisBuild / scalafixDependencies ++= Seq("com.github.vovapolu" %% "scaluzzi" % "0.1.23")
 
 // Java 17+ stuff
 ThisBuild / Test / javaOptions ++= Seq("--add-exports", "java.base/sun.nio.ch=ALL-UNNAMED")
@@ -64,6 +69,8 @@ ThisBuild / Test / javaOptions ++= Seq("--add-opens", "java.base/java.util=ALL-U
 ThisBuild / Test / javaOptions ++= Seq("--add-opens", "java.base/java.lang=ALL-UNNAMED")
 ThisBuild / Test / javaOptions ++= Seq("--add-opens", "java.base/java.lang.invoke=ALL-UNNAMED")
 ThisBuild / Test / fork := true // Needed otherwise the javaOptions are not taken into account
+
+Global / conflictWarning := ConflictWarning.disable
 
 // SCoverage configuration
 val excludedPackages: Seq[String] =
@@ -78,14 +85,15 @@ val excludedPackages: Seq[String] =
     "zio\\.spark\\.sql\\.LowPrioritySQLImplicits.*" // Spark implicits
   )
 
-ThisBuild / coverageFailOnMinimum           := false
-ThisBuild / coverageMinimumStmtTotal        := 80
-ThisBuild / coverageMinimumBranchTotal      := 80
-ThisBuild / coverageMinimumStmtPerPackage   := 50
-ThisBuild / coverageMinimumBranchPerPackage := 50
-ThisBuild / coverageMinimumStmtPerFile      := 0
-ThisBuild / coverageMinimumBranchPerFile    := 0
-ThisBuild / coverageExcludedPackages        := excludedPackages.mkString(";")
+// SCoverage configuration - disabled for sbt 2 compatibility
+// ThisBuild / coverageFailOnMinimum           := false
+// ThisBuild / coverageMinimumStmtTotal        := 80
+// ThisBuild / coverageMinimumBranchTotal      := 80
+// ThisBuild / coverageMinimumStmtPerPackage   := 50
+// ThisBuild / coverageMinimumBranchPerPackage := 50
+// ThisBuild / coverageMinimumStmtPerFile      := 0
+// ThisBuild / coverageMinimumBranchPerFile    := 0
+// ThisBuild / coverageExcludedPackages        := excludedPackages.mkString(";")
 
 // Aliases
 addCommandAlias("fmt", "scalafmt")
@@ -100,33 +108,52 @@ addCommandAlias("testSpecific", "; clean; test;")
 addCommandAlias("testSpecificWithCoverage", "; clean; coverage; test; coverageReport;")
 
 // -- Lib versions
-lazy val zio        = "2.1.21"
-lazy val zioPrelude = "1.0.0-RC41"
+val zio          = "2.1.21"
+val zioPrelude   = "1.0.0-RC41"
+val sparkVersion = "4.0.1"
 
-lazy val scala213 = "2.13.16"
-lazy val scala3   = "3.3.6"
+val scala213 = "2.13.16"
+val scala3   = "3.3.6"
 
 lazy val supportedScalaVersions = List(scala213, scala3)
 
 lazy val scalaMajorVersion: SettingKey[Long] = SettingKey("scala major version")
 lazy val scalaMinorVersion: SettingKey[Long] = SettingKey("scala minor version")
 
+lazy val root =
+  (project in file("."))
+    .settings(name := "zio-spark-root")
+    .settings(crossScalaVersions := Nil)
+    .settings(crossScalaVersionSettings)
+    .settings(commonSettings)
+    .settings(noPublishingSettings)
+    .aggregate(
+      core,
+      coreTests,
+      test,
+      exampleSimpleApp,
+      exampleSparkCodeMigration,
+      exampleUsingOlderSparkVersion,
+      exampleWordCount,
+      exampleZparkio,
+      exampleZIOEcosystem
+    )
+
 lazy val core =
   (project in file("zio-spark-core"))
-    .configs(IntegrationTest)
+    .configs(IntegrationTestConfig)
     .settings(crossScalaVersionSettings)
     .settings(commonSettings)
     .settings(
       name              := "zio-spark",
       scalaMajorVersion := CrossVersion.partialVersion(scalaVersion.value).get._1,
-      scalaMinorVersion := CrossVersion.partialVersion(scalaVersion.value).get._2,
       libraryDependencies ++= Seq(
         "dev.zio" %% "zio"         % zio,
         "dev.zio" %% "zio-streams" % zio,
         "dev.zio" %% "zio-prelude" % zioPrelude
-      ) ++ generateSparkLibraryDependencies(scalaMajorVersion.value, scalaMinorVersion.value)
-        ++ generateMagnoliaDependency(scalaMajorVersion.value, scalaMinorVersion.value),
-      Defaults.itSettings
+      ) ++ generateSparkLibraryDependencies(scalaMajorVersion.value)
+        ++ generateMagnoliaDependency(scalaMajorVersion.value),
+      IntegrationTestConfig / testOptions := (Test / testOptions).value
     )
     .enablePlugins(ZioSparkCodegenPlugin)
 
@@ -138,12 +165,11 @@ lazy val coreTests =
     .settings(
       name              := "zio-spark-tests",
       scalaMajorVersion := CrossVersion.partialVersion(scalaVersion.value).get._1,
-      scalaMinorVersion := CrossVersion.partialVersion(scalaVersion.value).get._2,
       libraryDependencies ++= Seq(
         "dev.zio" %% "zio"          % zio,
         "dev.zio" %% "zio-test"     % zio % Test,
         "dev.zio" %% "zio-test-sbt" % zio % Test
-      ) ++ generateSparkLibraryDependencies(scalaMajorVersion.value, scalaMinorVersion.value)
+      ) ++ generateSparkLibraryDependencies(scalaMajorVersion.value)
     )
     .dependsOn(core, test)
 
@@ -154,61 +180,123 @@ lazy val test =
     .settings(
       name              := "zio-spark-test",
       scalaMajorVersion := CrossVersion.partialVersion(scalaVersion.value).get._1,
-      scalaMinorVersion := CrossVersion.partialVersion(scalaVersion.value).get._2,
       libraryDependencies ++= Seq(
         "dev.zio" %% "zio"          % zio,
         "dev.zio" %% "zio-test"     % zio,
         "dev.zio" %% "zio-test-sbt" % zio % Test
-      ) ++ generateSparkLibraryDependencies(scalaMajorVersion.value, scalaMinorVersion.value)
+      ) ++ generateSparkLibraryDependencies(scalaMajorVersion.value)
     )
     .dependsOn(core)
 
-def example(project: Project): Project =
-  project
-    .dependsOn(core)
+lazy val exampleSimpleApp =
+  (project in file("examples/simple-app"))
+    .settings(
+      name         := "simple-app",
+      scalaVersion := "2.13.16"
+    )
     .settings(noPublishingSettings)
+    .settings(
+      libraryDependencies ++= Seq(
+        "org.apache.spark" %% "spark-core" % sparkVersion,
+        "org.apache.spark" %% "spark-sql"  % sparkVersion
+      )
+    )
+    .dependsOn(core)
 
-lazy val exampleSimpleApp              = (project in file("examples/simple-app")).configure(example)
-lazy val exampleSparkCodeMigration     = (project in file("examples/spark-code-migration")).configure(example)
-lazy val exampleUsingOlderSparkVersion = (project in file("examples/using-older-spark-version")).configure(example)
-lazy val exampleWordCount              = (project in file("examples/word-count")).configure(example)
-lazy val exampleZparkio                = (project in file("examples/zparkio")).configure(example)
+lazy val exampleSparkCodeMigration =
+  (project in file("examples/spark-code-migration"))
+    .settings(
+      name         := "spark-code-migration",
+      scalaVersion := "2.13.16"
+    )
+    .settings(noPublishingSettings)
+    .settings(
+      libraryDependencies ++= Seq(
+        "org.apache.spark" %% "spark-core" % sparkVersion,
+        "org.apache.spark" %% "spark-sql"  % sparkVersion
+      )
+    )
+    .dependsOn(core)
+
+lazy val exampleUsingOlderSparkVersion =
+  (project in file("examples/using-older-spark-version"))
+    .settings(
+      name         := "using-older-spark-version",
+      scalaVersion := "2.13.16"
+    )
+    .settings(noPublishingSettings)
+    .settings(
+      libraryDependencies ++= Seq(
+        "org.apache.spark" %% "spark-core" % "3.2.4",
+        "org.apache.spark" %% "spark-sql"  % "3.2.4"
+      )
+    )
+    .dependsOn(core)
+
+lazy val exampleWordCount =
+  (project in file("examples/word-count"))
+    .settings(
+      name         := "word-count",
+      scalaVersion := "2.13.16"
+    )
+    .settings(noPublishingSettings)
+    .settings(
+      libraryDependencies ++= Seq(
+        "org.apache.spark" %% "spark-core" % sparkVersion,
+        "org.apache.spark" %% "spark-sql"  % sparkVersion
+      )
+    )
+    .dependsOn(core)
+
+lazy val exampleZparkio =
+  (project in file("examples/zparkio"))
+    .settings(
+      name         := "zparkio-comparaison",
+      scalaVersion := "2.13.16"
+    )
+    .settings(noPublishingSettings)
+    .settings(
+      libraryDependencies ++= Seq(
+        "org.apache.spark" %% "spark-core"  % sparkVersion,
+        "org.apache.spark" %% "spark-sql"   % sparkVersion,
+        "dev.zio"          %% "zio-logging" % "2.5.1"
+      )
+    )
+    .dependsOn(core)
+
 lazy val exampleZIOEcosystem =
   (project in file("examples/zio-ecosystem"))
-    .configure(example)
+    .settings(
+      name         := "zio-ecosystem",
+      scalaVersion := "2.13.16"
+    )
+    .settings(noPublishingSettings)
+    .settings(
+      libraryDependencies ++= Seq(
+        "org.apache.spark" %% "spark-core" % sparkVersion,
+        "org.apache.spark" %% "spark-sql"  % sparkVersion,
+        "dev.zio"          %% "zio-cli"    % "0.7.3"
+      )
+    )
     .dependsOn(
+      core,
       exampleSimpleApp,
       exampleSparkCodeMigration,
       exampleWordCount
     )
 
-lazy val examples =
-  (project in file("examples"))
-    .settings(noPublishingSettings)
-    .settings(crossScalaVersions := Nil)
-    .aggregate(
-      exampleSimpleApp,
-      exampleSparkCodeMigration,
-      exampleUsingOlderSparkVersion,
-      exampleWordCount,
-      exampleZparkio,
-      exampleZIOEcosystem
-    )
-
 /** Generates required libraries for magnolia. */
-def generateMagnoliaDependency(scalaMajor: Long, scalaMinor: Long): Seq[ModuleID] =
-  scalaMinor match {
-    case _ if scalaMajor == 3 => Seq("com.softwaremill.magnolia1_3" %% "magnolia" % "1.3.18")
-    case 12 | 13              => Seq("com.softwaremill.magnolia1_2" %% "magnolia" % "1.1.10")
-    case _                    => throw new Exception("It should be unreachable.")
+def generateMagnoliaDependency(scalaMajor: Long): Seq[ModuleID] =
+  scalaMajor match {
+    case 3 => Seq("com.softwaremill.magnolia1_3" %% "magnolia" % "1.3.18")
+    case 2 => Seq("com.softwaremill.magnolia1_2" %% "magnolia" % "1.1.10")
+    case _ => throw new Exception("It should be unreachable.")
   }
 
 /** Generates required libraries for spark. */
-def generateSparkLibraryDependencies(scalaMajor: Long, scalaMinor: Long): Seq[ModuleID] = {
-  val mappingVersion       = if (scalaMajor == 2) scalaMinor else 13
-  val sparkVersion: String = sparkScalaVersionMapping(mappingVersion)
-  val sparkCore            = "org.apache.spark" %% "spark-core" % sparkVersion % Provided withSources ()
-  val sparkSql             = "org.apache.spark" %% "spark-sql"  % sparkVersion % Provided withSources ()
+def generateSparkLibraryDependencies(scalaMajor: Long): Seq[ModuleID] = {
+  val sparkCore = ("org.apache.spark" %% "spark-core" % sparkVersion % Provided).withSources()
+  val sparkSql  = ("org.apache.spark" %% "spark-sql"  % sparkVersion % Provided).withSources()
 
   scalaMajor match {
     case 2 => Seq(sparkCore, sparkSql)
@@ -221,17 +309,6 @@ def generateSparkLibraryDependencies(scalaMajor: Long, scalaMinor: Long): Seq[Mo
     case _ => throw new Exception("It should be unreachable.")
   }
 }
-
-/**
- * Returns the correct spark version depending of the current scala
- * minor.
- */
-def sparkScalaVersionMapping(scalaMinor: Long): String =
-  scalaMinor match {
-    case 12 => "3.5.4"
-    case 13 => "3.5.4"
-    case _  => throw new Exception("It should be unreachable.")
-  }
 
 /**
  * Don't fail the compilation for warnings by default, you can still
@@ -256,7 +333,7 @@ def crossScalaVersionSources(scalaVersion: String, environment: String, baseDir:
       case Some((3, _))  => List("3")
       case _             => List.empty
     }
-  scalaVersionSpecificSources(environment, baseDir)(versions: _*)
+  scalaVersionSpecificSources(environment, baseDir)(versions *)
 }
 
 lazy val crossScalaVersionSettings =
