@@ -103,7 +103,7 @@ addCommandAlias("testSpecificWithCoverage", "; clean; coverage; test; coverageRe
 lazy val zio        = "2.1.21"
 lazy val zioPrelude = "1.0.0-RC41"
 
-lazy val scala213 = "2.13.16"
+lazy val scala213 = "2.13.17"
 lazy val scala3   = "3.3.7"
 
 lazy val supportedScalaVersions = List(scala213, scala3)
