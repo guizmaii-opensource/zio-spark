@@ -27,7 +27,7 @@ object DataStreamWriterSpec extends ZIOSparkSpecDefault {
       } yield assert(writerWithOptions.options)(equalTo(options))
     }
 
-  override def spec =
+  override def spec: Spec[SparkSession,Throwable] =
     suite("DataStreamWriter configurations")(
       test("DataStreamWriter should apply options correctly") {
         val options = Map("a" -> "x", "b" -> "y")
