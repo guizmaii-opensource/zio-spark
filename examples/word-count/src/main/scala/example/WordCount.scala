@@ -31,7 +31,7 @@ object WordCount extends ZIOSparkAppDefault {
       mostUsedWord = words.sortBy(_._2).reverse.headOption
       _ <-
         mostUsedWord match {
-          case None    => Console.printLine("The file is empty :(.")
+          case None    => Console.printLine(cd"The file is empty :(.")
           case Some(w) => Console.printLine(s"The most used word is '${w._1}'.")
         }
     } yield ()

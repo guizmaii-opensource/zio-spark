@@ -43,7 +43,7 @@ object CancellableEffectSpec extends ZIOSparkSpecDefault {
 
   // This test seems to be flaky and make the whole specs failed.
   // See: https://github.com/univalence/zio-spark/issues/304.
-  def spec: Spec[SparkSession,Throwable] =
+  def spec: Spec[SparkSession, Throwable] =
     suite("Test cancellable spark jobs")(
       test("Cancellable jobs should have a specific group Id") {
         CancellableEffect.makeItCancellable(getJobGroup).map(x => assertTrue(x.startsWith("cancellable-group")))
