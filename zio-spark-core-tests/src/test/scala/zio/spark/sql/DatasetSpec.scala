@@ -260,7 +260,7 @@ object DatasetSpec extends ZIOSparkSpecDefault {
             ss    <- ZIO.service[SparkSession]
             input <- read
             _     <- input.createOrReplaceTempView("people")
-            df <-
+            df    <-
               ss.sql(
                 """
                   |SELECT * FROM people

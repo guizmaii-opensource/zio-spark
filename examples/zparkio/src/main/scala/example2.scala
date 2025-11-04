@@ -133,10 +133,10 @@ package Transformations {
          * All source can be fetch in parallel.
          * Without ZIO, spark would just seat there while waiting for the first source to be retrieve before sending the
          * next query to the database. */
-        usersF <- DatabaseSource.getUsers.fork
-        postsF <- DatabaseSource.getPosts.fork
-        users  <- usersF.join
-        posts  <- postsF.join
+        usersF    <- DatabaseSource.getUsers.fork
+        postsF    <- DatabaseSource.getPosts.fork
+        users     <- usersF.join
+        posts     <- postsF.join
         authorIds <- {
           // Dataset#collect in zio-spark is an effect. We don't need to wrap it in an attempt
           val getAuthors = posts.map(_.authorId).distinct.collect

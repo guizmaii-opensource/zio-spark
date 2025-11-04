@@ -62,7 +62,7 @@ object ZIOEcosystem extends ZIOSparkAppDefault {
   val runSubcommandArgs: Args[Example] = Args.enumeration(Example.values.map(x => (x.name, x)): _*)
 
   val exampleSubcommand: Command[RunSubcommand] = Command("example", Options.none, runSubcommandArgs).map(RunSubcommand)
-  val zioSparkCommand: Command[RunSubcommand] =
+  val zioSparkCommand: Command[RunSubcommand]   =
     Command("zio-spark", Options.none, Args.none).subcommands(exampleSubcommand)
 
   val app: CliApp[SparkSession, Throwable, Unit] =

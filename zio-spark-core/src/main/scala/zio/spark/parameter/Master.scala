@@ -11,7 +11,7 @@ sealed trait Master {
       case LocalWithFailures(nWorkers, maxFailures) => s"local[$nWorkers,$maxFailures]"
       case LocalAllNodes                            => "local[*]"
       case LocalAllNodesWithFailures(maxFailures)   => s"local[*,$maxFailures]"
-      case Spark(masters) =>
+      case Spark(masters)                           =>
         val masterUrls = masters.map(_.toSparkString).mkString(",")
         s"spark://$masterUrls"
       case Mesos(master) => s"mesos://${master.toSparkString}"

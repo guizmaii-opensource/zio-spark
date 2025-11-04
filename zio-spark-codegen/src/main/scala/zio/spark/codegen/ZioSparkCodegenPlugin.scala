@@ -6,7 +6,12 @@ import sbt.Keys.*
 
 import zio.{ULayer, Unsafe, URLayer, ZIO, ZLayer}
 import zio.spark.codegen.generation.{Generator, Logger, Output}
-import zio.spark.codegen.generation.Environment.{ScalafmtFormatter, ScalafmtFormatterLive, ZIOSparkFolders, ZIOSparkFoldersLive}
+import zio.spark.codegen.generation.Environment.{
+  ScalafmtFormatter,
+  ScalafmtFormatterLive,
+  ZIOSparkFolders,
+  ZIOSparkFoldersLive
+}
 import zio.spark.codegen.generation.plan.Plan
 import zio.spark.codegen.generation.plan.Plan.*
 
@@ -35,7 +40,7 @@ object ZioSparkCodegenPlugin extends AutoPlugin {
 
         val scalaVersionLayer: ULayer[ScalaBinaryVersion] = ZLayer.succeed(version)
         val classpathLayer: ULayer[Classpath]             = ZLayer.succeed((Compile / dependencyClasspathAsJars).value)
-        val scalafmtLayer: ULayer[ScalafmtFormatter] =
+        val scalafmtLayer: ULayer[ScalafmtFormatter]      =
           ZLayer.succeed(
             ScalafmtFormatterLive(
               Scalafmt.create(this.getClass.getClassLoader),

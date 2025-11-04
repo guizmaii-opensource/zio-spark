@@ -76,7 +76,7 @@ object SchemaFromCaseClassSpec extends ZIOSpecDefault {
         final case class Test(foo: Int, bar: Bar)
 
         val nestedSchema = StructType(Seq(StructField("baz", StringType, nullable = false)))
-        val schema =
+        val schema       =
           StructType(
             Seq(
               StructField("foo", IntegerType, nullable  = false),
@@ -91,7 +91,7 @@ object SchemaFromCaseClassSpec extends ZIOSpecDefault {
         final case class Test(foo: Int, bar: Option[Bar])
 
         val nestedSchema = StructType(Seq(StructField("baz", StringType, nullable = false)))
-        val schema =
+        val schema       =
           StructType(
             Seq(
               StructField("foo", IntegerType, nullable  = false),

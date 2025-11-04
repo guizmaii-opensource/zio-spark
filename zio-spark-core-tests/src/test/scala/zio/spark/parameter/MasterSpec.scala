@@ -5,7 +5,7 @@ import zio.spark.parameter.Master.MasterNodeConfiguration
 
 object MasterSpec
     extends ADTTestFor[Master](
-      name = "Master",
+      name      = "Master",
       conftests = {
         val masterNodeConfiguration: MasterNodeConfiguration = url("localhost", 48)
 
