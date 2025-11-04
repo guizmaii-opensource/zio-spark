@@ -17,9 +17,9 @@ object CancellableEffectSpec extends ZIOSparkSpecDefault {
 
   def listenSparkEvents[R, E, A](zio: ZIO[R, E, A]): ZIO[R with SparkSession, E, (Seq[SparkListenerEvent], A)] =
     for {
-      events  <- Ref.make[Chunk[SparkListenerEvent]](Chunk.empty)
-      runtime <- ZIO.runtime[R with SparkSession]
-      sc      <- fromSpark(_.sparkContext).orDie
+      events   <- Ref.make[Chunk[SparkListenerEvent]](Chunk.empty)
+      runtime  <- ZIO.runtime[R with SparkSession]
+      sc       <- fromSpark(_.sparkContext).orDie
       listener <-
         ZIO.succeed(new SparkFirehoseListener {
           override def onEvent(event: SparkListenerEvent): Unit =
