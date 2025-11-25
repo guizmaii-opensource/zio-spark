@@ -1,5 +1,5 @@
 name         := "simple-app"
-scalaVersion := "2.13.17"
+scalaVersion := "2.13.18"
 
 val sparkVersion = "3.5.7"
 
