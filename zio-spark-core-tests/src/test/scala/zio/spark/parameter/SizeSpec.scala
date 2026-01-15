@@ -4,7 +4,7 @@ import zio.spark.helper._
 
 object SizeSpec
     extends ADTTestFor[Size](
-      name = "Size",
+      name      = "Size",
       conftests =
         List(
           Conftest("unlimited", unlimitedSize, "0"),

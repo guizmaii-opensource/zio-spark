@@ -122,7 +122,7 @@ case class SparkPlan(module: Module, template: Template) extends Plan { self =>
       maybeImplicits   = template.implicits(scalaVersion).map("  // scalafix:off" <<< _ >>> "  // scalafix:on")
       definition       = template.definition
       helpers          = template.helpers
-      code =
+      code             =
         s"""package ${module.zioHierarchy}
            |
            |${maybeImports.getOrElse("")}

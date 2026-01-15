@@ -50,7 +50,7 @@ object CancellableEffect {
       groupName <- zio.Random.nextUUID.map("cancellable-group-" + _.toString)
       sc        <- zio.spark.sql.fromSpark(_.sparkContext)
       executor  <- ZIO.executor
-      x <-
+      x         <-
         job
           .onExecutor(new setGroupNameExecutor(executor, sc, groupName))
           .disconnect

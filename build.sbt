@@ -6,7 +6,7 @@ inThisBuild(
     homepage      := Some(url("https://github.com/univalence/zio-spark")),
     licenses      := List("Apache-2.0" -> url("https://github.com/univalence/zio-spark/blob/master/LICENSE")),
     versionScheme := Some("early-semver"),
-    developers := List(
+    developers    := List(
       Developer(
         id    = "jwinandy",
         name  = "Jonathan Winandy",
@@ -173,7 +173,7 @@ lazy val exampleSparkCodeMigration     = (project in file("examples/spark-code-m
 lazy val exampleUsingOlderSparkVersion = (project in file("examples/using-older-spark-version")).configure(example)
 lazy val exampleWordCount              = (project in file("examples/word-count")).configure(example)
 lazy val exampleZparkio                = (project in file("examples/zparkio")).configure(example)
-lazy val exampleZIOEcosystem =
+lazy val exampleZIOEcosystem           =
   (project in file("examples/zio-ecosystem"))
     .configure(example)
     .dependsOn(

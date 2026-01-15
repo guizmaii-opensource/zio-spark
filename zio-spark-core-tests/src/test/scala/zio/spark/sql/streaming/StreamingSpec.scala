@@ -20,7 +20,7 @@ object StreamingSpec extends ZIOSparkSpecDefault {
 
       for {
         df <- readingEffect(SparkSession.readStream.schema[Person])
-        _ <-
+        _  <-
           df.writeStream
             .format("memory")
             .outputMode(append)
@@ -52,7 +52,7 @@ object StreamingSpec extends ZIOSparkSpecDefault {
       test(s"Streaming using once trigger is the same as test") {
         for {
           df <- SparkSession.readStream.textFile(resourcesPath("data-txt"))
-          _ <-
+          _  <-
             df.flatMap(_.split(" "))
               .writeStream
               .format("memory")
