@@ -58,12 +58,18 @@ ThisBuild / semanticdbVersion := scalafixSemanticdb.revision
 ThisBuild / scalafixDependencies ++= Seq("com.github.vovapolu" %% "scaluzzi" % "0.1.23")
 
 // Java 17+ stuff
-ThisBuild / Test / javaOptions ++= Seq("--add-exports", "java.base/sun.nio.ch=ALL-UNNAMED")
-ThisBuild / Test / javaOptions ++= Seq("--add-opens", "java.base/java.nio=ALL-UNNAMED")
-ThisBuild / Test / javaOptions ++= Seq("--add-opens", "java.base/java.util=ALL-UNNAMED")
-ThisBuild / Test / javaOptions ++= Seq("--add-opens", "java.base/java.lang=ALL-UNNAMED")
-ThisBuild / Test / javaOptions ++= Seq("--add-opens", "java.base/java.lang.invoke=ALL-UNNAMED")
+val java17PlusJavaOptions: Seq[String] =
+  Seq(
+    "--add-exports", "java.base/sun.nio.ch=ALL-UNNAMED",
+    "--add-opens", "java.base/java.nio=ALL-UNNAMED",
+    "--add-opens", "java.base/java.util=ALL-UNNAMED",
+    "--add-opens", "java.base/java.lang=ALL-UNNAMED",
+    "--add-opens", "java.base/java.lang.invoke=ALL-UNNAMED"
+  )
+ThisBuild / Test / javaOptions ++= java17PlusJavaOptions
 ThisBuild / Test / fork := true // Needed otherwise the javaOptions are not taken into account
+ThisBuild / run / javaOptions ++= java17PlusJavaOptions
+ThisBuild / run / fork := true
 
 // SCoverage configuration
 val excludedPackages: Seq[String] =
