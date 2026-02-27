@@ -70,6 +70,7 @@ ThisBuild / Test / javaOptions ++= java17PlusJavaOptions
 ThisBuild / Test / fork := true // Needed otherwise the javaOptions are not taken into account
 ThisBuild / run / javaOptions ++= java17PlusJavaOptions
 ThisBuild / run / fork := true
+ThisBuild / run / baseDirectory := (LocalRootProject / baseDirectory).value
 
 // SCoverage configuration
 val excludedPackages: Seq[String] =
