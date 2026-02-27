@@ -7,7 +7,7 @@ import zio.spark.experimental
 import zio.spark.experimental.{Pipeline, ZIOSparkAppDefault}
 import zio.spark.parameter._
 import zio.spark.sql._
-import zio.spark.sql.implicits._
+import scala3encoders.given
 
 object UsingOlderSparkVersion extends ZIOSparkAppDefault {
 

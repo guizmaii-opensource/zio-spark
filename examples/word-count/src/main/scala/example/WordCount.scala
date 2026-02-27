@@ -5,7 +5,7 @@ import zio.spark.experimental.ZIOSparkAppDefault
 import zio.spark.parameter._
 import zio.spark.rdd._
 import zio.spark.sql._
-import zio.spark.sql.implicits._
+import scala3encoders.given
 
 object WordCount extends ZIOSparkAppDefault {
 

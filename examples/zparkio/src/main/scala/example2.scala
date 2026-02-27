@@ -15,6 +15,7 @@ import org.apache.spark.sql.Encoder
 import zio.{RIO, Task, ZIO, ZLayer}
 import zio.spark.sql.{Dataset, SIO, SparkSession}
 import zio.spark.sql.implicits._
+import scala3encoders.given
 
 package items {
   final case class Post(postId: Int, authorId: Int, title: String, content: String)
