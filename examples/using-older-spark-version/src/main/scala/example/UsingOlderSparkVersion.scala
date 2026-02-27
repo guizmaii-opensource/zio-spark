@@ -1,13 +1,13 @@
 package example
 
 import org.apache.spark.sql.Row
+import scala3encoders.given
 
 import zio._
 import zio.spark.experimental
 import zio.spark.experimental.{Pipeline, ZIOSparkAppDefault}
 import zio.spark.parameter._
 import zio.spark.sql._
-import zio.spark.sql.implicits._
 
 object UsingOlderSparkVersion extends ZIOSparkAppDefault {
 

@@ -16,7 +16,7 @@ jobs:
       - uses: actions/setup-java@v4
         with:
           distribution: temurin
-          java-version: 11
+          java-version: '17'
           check-latest: true
 
       - name: Download sources
@@ -38,7 +38,7 @@ jobs:
       - uses: actions/setup-java@v4
         with:
           distribution: temurin
-          java-version: 11
+          java-version: '17'
           check-latest: true
 
       - name: Run example
@@ -66,9 +66,9 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        scala: [ "2.13.x", "3.x" ]
+        scala: [ "3.x" ]
         project: [ "coreTests", "test" ]
-        java: [ "11", "17", "21" ]
+        java: [ "17", "21", "25" ]
     steps:
       - uses: actions/checkout@v4
       - uses: sbt/setup-sbt@v1
@@ -80,14 +80,7 @@ jobs:
           check-latest: true
 
       - name: Run tests
-        if: ${{ !startsWith(matrix.scala, '2.13.') || matrix.project != 'coreTests' }}
         run: sbt ++${{ matrix.scala }} "project ${{ matrix.project }}" testSpecific
-      - name: Run tests 2.13.X with coverage
-        if: ${{ startsWith(matrix.scala, '2.13.') && matrix.project == 'coreTests' }}
-        run: sbt ++${{ matrix.scala }} "project coreTests" testSpecificWithCoverage
-      - name: Publish coverage to codecov
-        if: ${{ startsWith(matrix.scala, '2.13.') && matrix.project == 'coreTests' }}
-        uses: codecov/codecov-action@v2
 
   check-codegen:
     runs-on: ubuntu-latest
@@ -98,7 +91,7 @@ jobs:
       - uses: actions/setup-java@v4
         with:
           distribution: temurin
-          java-version: 11
+          java-version: '17'
           check-latest: true
 
       - name: Check formatting and linting
@@ -115,7 +108,7 @@ jobs:
       - uses: actions/setup-java@v4
         with:
           distribution: temurin
-          java-version: 11
+          java-version: '17'
           check-latest: true
 
       - name: Run tests for codegen
