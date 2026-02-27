@@ -39,8 +39,7 @@ object ToSchema extends AutoDerivation[ToSchema] {
       }
     }
 
-
-  given [T <: Any & Product](using T: ToSchema[T]):ToStructSchema[T] = T.asInstanceOf[ToStructSchema[T]]
+  given [T <: Any & Product](using T: ToSchema[T]): ToStructSchema[T] = T.asInstanceOf[ToStructSchema[T]]
 
   // We should not split a ToStructSchema.
   override def split[T](ctx: SealedTrait[ToSchema, T]): ToSchema[T] = ???
@@ -55,7 +54,7 @@ object ToSchema extends AutoDerivation[ToSchema] {
 
   given ToSchema[BigDecimal] = ToSchema(DecimalType(10, 0))
 
-  given ToSchema[Float]   = ToSchema(FloatType)
+  given ToSchema[Float] = ToSchema(FloatType)
   given ToSchema[Double] = ToSchema(DoubleType)
 
   given ToSchema[Byte] = ToSchema(ByteType)
@@ -65,9 +64,9 @@ object ToSchema extends AutoDerivation[ToSchema] {
   given ToSchema[java.sql.Date] = ToSchema(DateType)
 
   given [T](using T: ToSchema[T]): ToSchema[Option[T]] = NullableToSchema(T)
-  given [K, V](using K: ToSchema[K], V: ToSchema[V]): ToSchema[Map[K, V]] = ToSchema(DataTypes.createMapType(K.toSchema, V.toSchema))
+  given [K, V](using K: ToSchema[K], V: ToSchema[V]): ToSchema[Map[K, V]] =
+    ToSchema(DataTypes.createMapType(K.toSchema, V.toSchema))
   given [T](using T: ToSchema[T]): ToSchema[List[T]] = ToSchema(DataTypes.createArrayType(T.toSchema))
 
   def schemaFrom[T](using T: ToStructSchema[T]): ToStructSchema[T] = T
 }
-

@@ -1,9 +1,10 @@
 package zio.spark.sql
 
-import scala3encoders.given
 import org.apache.spark.sql.{ColumnName, Encoder}
-import zio.spark.rdd.*
+import scala3encoders.given
+
 import zio.*
+import zio.spark.rdd.*
 
 import scala.reflect.ClassTag
 
@@ -16,7 +17,7 @@ object implicits {
     def toDataset(implicit trace: Trace): SIO[Dataset[T]] =
       zio.spark.sql.fromSpark(ss => ss.implicits.localSeqToDatasetHolder(seq).toDS().zioSpark).orDie
 
-    def toDS(implicit trace: Trace):  SIO[Dataset[T]] = toDataset
+    def toDS(implicit trace: Trace): SIO[Dataset[T]] = toDataset
   }
 
   extension [T: ClassTag](seq: Seq[T]) {
