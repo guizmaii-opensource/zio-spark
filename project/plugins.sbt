@@ -1,10 +1,11 @@
 ThisBuild / libraryDependencySchemes += "org.scala-lang.modules" %% "scala-xml"                % VersionScheme.Always
 ThisBuild / libraryDependencySchemes += "org.scala-lang.modules" %% "scala-parser-combinators" % VersionScheme.Always
+ThisBuild / libraryDependencySchemes += "com.github.luben"        % "zstd-jni"                 % VersionScheme.Always
 
 addSbtPlugin("ch.epfl.scala"                     % "sbt-scalafix"     % "0.14.6")
 addSbtPlugin("com.github.sbt"                    % "sbt-ci-release"   % "1.11.2")
 addSbtPlugin("org.typelevel"                     % "sbt-tpolecat"     % "0.5.3")
-addSbtPlugin("org.scalameta"                     % "sbt-scalafmt"     % "2.5.5")
+addSbtPlugin("org.scalameta"                     % "sbt-scalafmt"     % "2.5.6")
 addSbtPlugin("org.scoverage"                     % "sbt-scoverage"    % "2.4.4")
 addSbtPlugin("com.thoughtworks.sbt-api-mappings" % "sbt-api-mappings" % "3.0.2")
 
