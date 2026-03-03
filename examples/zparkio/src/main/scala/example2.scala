@@ -68,7 +68,6 @@ package services {
     }
 
     trait LiveService extends FileIO.Service {
-      @SuppressWarnings(Array("scalafix:Disable.close", "scalafix:Disable.fromFile"))
       override protected def readFileContent(path: String): Task[Seq[String]] =
         ZIO.attempt {
           val file    = Source.fromFile(path)
