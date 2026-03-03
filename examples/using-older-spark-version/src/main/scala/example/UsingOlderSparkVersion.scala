@@ -28,7 +28,7 @@ object UsingOlderSparkVersion extends ZIOSparkAppDefault {
   val job: ZIO[SparkSession, Throwable, Unit] =
     for {
       maybePeople <- pipeline.run
-      _ <-
+      _           <-
         maybePeople match {
           case None    => Console.printLine("There is nobody :(.")
           case Some(p) => Console.printLine(s"The first person's name is ${p.name}.")

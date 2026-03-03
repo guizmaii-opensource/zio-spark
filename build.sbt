@@ -6,7 +6,7 @@ inThisBuild(
     homepage      := Some(url("https://github.com/univalence/zio-spark")),
     licenses      := List("Apache-2.0" -> url("https://github.com/univalence/zio-spark/blob/master/LICENSE")),
     versionScheme := Some("early-semver"),
-    developers := List(
+    developers    := List(
       Developer(
         id    = "jwinandy",
         name  = "Jonathan Winandy",
@@ -60,11 +60,16 @@ ThisBuild / scalafixDependencies ++= Seq("com.github.vovapolu" %% "scaluzzi" % "
 // Java 17+ stuff
 val java17PlusJavaOptions: Seq[String] =
   Seq(
-    "--add-exports", "java.base/sun.nio.ch=ALL-UNNAMED",
-    "--add-opens", "java.base/java.nio=ALL-UNNAMED",
-    "--add-opens", "java.base/java.util=ALL-UNNAMED",
-    "--add-opens", "java.base/java.lang=ALL-UNNAMED",
-    "--add-opens", "java.base/java.lang.invoke=ALL-UNNAMED"
+    "--add-exports",
+    "java.base/sun.nio.ch=ALL-UNNAMED",
+    "--add-opens",
+    "java.base/java.nio=ALL-UNNAMED",
+    "--add-opens",
+    "java.base/java.util=ALL-UNNAMED",
+    "--add-opens",
+    "java.base/java.lang=ALL-UNNAMED",
+    "--add-opens",
+    "java.base/java.lang.invoke=ALL-UNNAMED"
   )
 ThisBuild / Test / javaOptions ++= java17PlusJavaOptions
 ThisBuild / Test / fork := true // Needed otherwise the javaOptions are not taken into account
@@ -125,7 +130,7 @@ lazy val core =
       libraryDependencies ++= Seq(
         "dev.zio" %% "zio"         % zio,
         "dev.zio" %% "zio-streams" % zio,
-        "dev.zio" %% "zio-prelude" % zioPrelude,
+        "dev.zio" %% "zio-prelude" % zioPrelude
       ) ++ sparkLibraryDependencies ++ magnoliaDependency,
       Defaults.itSettings
     )
@@ -141,7 +146,7 @@ lazy val coreTests =
       libraryDependencies ++= Seq(
         "dev.zio" %% "zio"          % zio,
         "dev.zio" %% "zio-test"     % zio % Test,
-        "dev.zio" %% "zio-test-sbt" % zio % Test,
+        "dev.zio" %% "zio-test-sbt" % zio % Test
       ) ++ sparkLibraryDependencies
     )
     .dependsOn(core, test)
@@ -155,7 +160,7 @@ lazy val test =
       libraryDependencies ++= Seq(
         "dev.zio" %% "zio"          % zio,
         "dev.zio" %% "zio-test"     % zio,
-        "dev.zio" %% "zio-test-sbt" % zio % Test,
+        "dev.zio" %% "zio-test-sbt" % zio % Test
       ) ++ sparkLibraryDependencies
     )
     .dependsOn(core)
@@ -170,7 +175,7 @@ lazy val exampleSparkCodeMigration     = (project in file("examples/spark-code-m
 lazy val exampleUsingOlderSparkVersion = (project in file("examples/using-older-spark-version")).configure(example)
 lazy val exampleWordCount              = (project in file("examples/word-count")).configure(example)
 lazy val exampleZparkio                = (project in file("examples/zparkio")).configure(example)
-lazy val exampleZIOEcosystem =
+lazy val exampleZIOEcosystem           =
   (project in file("examples/zio-ecosystem"))
     .configure(example)
     .dependsOn(
@@ -196,11 +201,12 @@ val sparkVersion = "3.5.4"
 
 val magnoliaDependency: Seq[ModuleID] = Seq("com.softwaremill.magnolia1_3" %% "magnolia" % "1.3.18")
 
-val sparkLibraryDependencies: Seq[ModuleID] = Seq(
-  ("org.apache.spark" %% "spark-core" % sparkVersion % Provided withSources ()).cross(CrossVersion.for3Use2_13),
-  ("org.apache.spark" %% "spark-sql"  % sparkVersion % Provided withSources ()).cross(CrossVersion.for3Use2_13),
-  "io.github.vincenzobaz" %% "spark-scala3-encoders" % "0.3.2",
-)
+val sparkLibraryDependencies: Seq[ModuleID] =
+  Seq(
+    ("org.apache.spark" %% "spark-core" % sparkVersion % Provided withSources ()).cross(CrossVersion.for3Use2_13),
+    ("org.apache.spark" %% "spark-sql"  % sparkVersion % Provided withSources ()).cross(CrossVersion.for3Use2_13),
+    "io.github.vincenzobaz" %% "spark-scala3-encoders" % "0.3.2"
+  )
 
 /**
  * Don't fail the compilation for warnings by default, you can still

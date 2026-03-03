@@ -43,7 +43,7 @@ case class Method(
   def toCode(methodType: MethodType, plan: SparkPlan): String =
     methodType match {
       case MethodType.Ignored | MethodType.ToImplement | MethodType.ToHandle => s"[[$fullName]]"
-      case _ =>
+      case _                                                                 =>
         val effectful: Boolean =
           methodType match {
             case MethodType.DriverAction | MethodType.DistributedComputation => true
