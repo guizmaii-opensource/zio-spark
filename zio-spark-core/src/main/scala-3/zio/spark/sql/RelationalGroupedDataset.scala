@@ -23,7 +23,8 @@ final case class RelationalGroupedDataset(underlying: UnderlyingRelationalGroupe
   // scalafix:on
 
   /** Unpack the underlying RelationalGroupedDataset into a DataFrame. */
-  def unpack[U](f: UnderlyingRelationalGroupedDataset => UnderlyingDataset[U]): Dataset[U] = Dataset(f(underlying))
+  def unpack[U](f: UnderlyingRelationalGroupedDataset => UnderlyingDataset[U]): Dataset[U] =
+    Dataset(f(underlying))
 
   /**
    * Unpack the underlying RelationalGroupedDataset into a DataFrame, it
@@ -39,7 +40,8 @@ final case class RelationalGroupedDataset(underlying: UnderlyingRelationalGroupe
    */
   def transformation(
       f: UnderlyingRelationalGroupedDataset => UnderlyingRelationalGroupedDataset
-  ): RelationalGroupedDataset = RelationalGroupedDataset(f(underlying))
+  ): RelationalGroupedDataset =
+    RelationalGroupedDataset(f(underlying))
 
   /**
    * Applies a transformation to the underlying
@@ -48,7 +50,8 @@ final case class RelationalGroupedDataset(underlying: UnderlyingRelationalGroupe
    */
   def transformationWithAnalysis(
       f: UnderlyingRelationalGroupedDataset => UnderlyingRelationalGroupedDataset
-  ): TryAnalysis[RelationalGroupedDataset] = TryAnalysis(transformation(f))
+  ): TryAnalysis[RelationalGroupedDataset] =
+    TryAnalysis(transformation(f))
 
   /** Applies an action to the underlying RelationalGroupedDataset. */
   def get[U](f: UnderlyingRelationalGroupedDataset => U): U = f(underlying)
@@ -57,11 +60,13 @@ final case class RelationalGroupedDataset(underlying: UnderlyingRelationalGroupe
    * Applies an action to the underlying RelationalGroupedDataset, it is
    * used for transformations that can fail due to an AnalysisException.
    */
-  def getWithAnalysis[U](f: UnderlyingRelationalGroupedDataset => U): TryAnalysis[U] = TryAnalysis(f(underlying))
+  def getWithAnalysis[U](f: UnderlyingRelationalGroupedDataset => U): TryAnalysis[U] =
+    TryAnalysis(f(underlying))
 
   // Generated functions coming from spark
 
-  def as[K: Encoder, T: Encoder]: TryAnalysis[KeyValueGroupedDataset[K, T]] = getWithAnalysis(_.as[K, T])
+  def as[K: Encoder, T: Encoder]: TryAnalysis[KeyValueGroupedDataset[K, T]] =
+    getWithAnalysis(_.as[K, T])
 
   // ===============
 
@@ -79,26 +84,34 @@ final case class RelationalGroupedDataset(underlying: UnderlyingRelationalGroupe
 
   // ===============
 
-  def count: DataFrame = unpack(_.count())
+  def count: DataFrame =
+    unpack(_.count())
 
   // ===============
 
   def agg(aggExpr: (String, String), aggExprs: (String, String)*): TryAnalysis[DataFrame] =
     unpackWithAnalysis(_.agg(aggExpr, aggExprs: _*))
 
-  def agg(exprs: Map[String, String]): TryAnalysis[DataFrame] = unpackWithAnalysis(_.agg(exprs))
+  def agg(exprs: Map[String, String]): TryAnalysis[DataFrame] =
+    unpackWithAnalysis(_.agg(exprs))
 
-  def agg(expr: Column, exprs: Column*): TryAnalysis[DataFrame] = unpackWithAnalysis(_.agg(expr, exprs: _*))
+  def agg(expr: Column, exprs: Column*): TryAnalysis[DataFrame] =
+    unpackWithAnalysis(_.agg(expr, exprs: _*))
 
-  def avg(colNames: String*): TryAnalysis[DataFrame] = unpackWithAnalysis(_.avg(colNames: _*))
+  def avg(colNames: String*): TryAnalysis[DataFrame] =
+    unpackWithAnalysis(_.avg(colNames: _*))
 
-  def max(colNames: String*): TryAnalysis[DataFrame] = unpackWithAnalysis(_.max(colNames: _*))
+  def max(colNames: String*): TryAnalysis[DataFrame] =
+    unpackWithAnalysis(_.max(colNames: _*))
 
-  def mean(colNames: String*): TryAnalysis[DataFrame] = unpackWithAnalysis(_.mean(colNames: _*))
+  def mean(colNames: String*): TryAnalysis[DataFrame] =
+    unpackWithAnalysis(_.mean(colNames: _*))
 
-  def min(colNames: String*): TryAnalysis[DataFrame] = unpackWithAnalysis(_.min(colNames: _*))
+  def min(colNames: String*): TryAnalysis[DataFrame] =
+    unpackWithAnalysis(_.min(colNames: _*))
 
-  def sum(colNames: String*): TryAnalysis[DataFrame] = unpackWithAnalysis(_.sum(colNames: _*))
+  def sum(colNames: String*): TryAnalysis[DataFrame] =
+    unpackWithAnalysis(_.sum(colNames: _*))
 
   // ===============
 

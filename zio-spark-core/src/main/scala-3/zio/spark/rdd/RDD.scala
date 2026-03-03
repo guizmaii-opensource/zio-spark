@@ -32,36 +32,45 @@ final case class RDD[T](underlying: UnderlyingRDD[T]) { self =>
   // scalafix:on
 
   /** Applies an action to the underlying RDD. */
-  def action[U](f: UnderlyingRDD[T] => U)(implicit trace: Trace): Task[U] = ZIO.attempt(get(f))
+  def action[U](f: UnderlyingRDD[T] => U)(implicit trace: Trace): Task[U] =
+    ZIO.attempt(get(f))
 
   /** Applies a transformation to the underlying RDD. */
-  def transformation[TNew](f: UnderlyingRDD[T] => UnderlyingRDD[TNew]): RDD[TNew] = RDD(f(underlying))
+  def transformation[TNew](f: UnderlyingRDD[T] => UnderlyingRDD[TNew]): RDD[TNew] =
+    RDD(f(underlying))
 
   /** Applies an action to the underlying RDD. */
   def get[U](f: UnderlyingRDD[T] => U): U = f(underlying)
 
   // Generated functions coming from spark
 
-  def getNumPartitions: Int = get(_.getNumPartitions)
+  def getNumPartitions: Int =
+    get(_.getNumPartitions)
 
-  def partitions: Seq[Partition] = get(_.partitions.toSeq)
+  def partitions: Seq[Partition] =
+    get(_.partitions.toSeq)
 
-  def preferredLocations(split: Partition): Seq[String] = get(_.preferredLocations(split))
+  def preferredLocations(split: Partition): Seq[String] =
+    get(_.preferredLocations(split))
 
-  def toDebugString: String = get(_.toDebugString)
+  def toDebugString: String =
+    get(_.toDebugString)
 
   // ===============
 
   def aggregate[U: ClassTag](zeroValue: => U)(seqOp: (U, T) => U, combOp: (U, U) => U)(implicit trace: Trace): Task[U] =
     action(_.aggregate[U](zeroValue)(seqOp, combOp))
 
-  def collect(implicit trace: Trace): Task[Seq[T]] = action(_.collect().toSeq)
+  def collect(implicit trace: Trace): Task[Seq[T]] =
+    action(_.collect().toSeq)
 
-  def count(implicit trace: Trace): Task[Long] = action(_.count())
+  def count(implicit trace: Trace): Task[Long] =
+    action(_.count())
 
   def countApprox(timeout: => Long, confidence: => Double = 0.95)(implicit
       trace: Trace
-  ): Task[PartialResult[BoundedDouble]] = action(_.countApprox(timeout, confidence))
+  ): Task[PartialResult[BoundedDouble]] =
+    action(_.countApprox(timeout, confidence))
 
   def countApproxDistinct(p: => Int, sp: => Int)(implicit trace: Trace): Task[Long] =
     action(_.countApproxDistinct(p, sp))
@@ -69,53 +78,70 @@ final case class RDD[T](underlying: UnderlyingRDD[T]) { self =>
   def countApproxDistinct(relativeSD: => Double = 0.05)(implicit trace: Trace): Task[Long] =
     action(_.countApproxDistinct(relativeSD))
 
-  def countByValue(implicit ord: Ordering[T] = noOrdering, trace: Trace): Task[Map[T, Long]] = action(_.countByValue())
+  def countByValue(implicit ord: Ordering[T] = noOrdering, trace: Trace): Task[Map[T, Long]] =
+    action(_.countByValue())
 
   def countByValueApprox(timeout: => Long, confidence: => Double = 0.95)(implicit
       ord: Ordering[T] = noOrdering,
       trace: Trace
-  ): Task[PartialResult[Map[T, BoundedDouble]]] = action(_.countByValueApprox(timeout, confidence))
+  ): Task[PartialResult[Map[T, BoundedDouble]]] =
+    action(_.countByValueApprox(timeout, confidence))
 
-  def first(implicit trace: Trace): Task[T] = action(_.first())
+  def first(implicit trace: Trace): Task[T] =
+    action(_.first())
 
-  def fold(zeroValue: => T)(op: (T, T) => T)(implicit trace: Trace): Task[T] = action(_.fold(zeroValue)(op))
+  def fold(zeroValue: => T)(op: (T, T) => T)(implicit trace: Trace): Task[T] =
+    action(_.fold(zeroValue)(op))
 
-  def foreach(f: T => Unit)(implicit trace: Trace): Task[Unit] = action(_.foreach(f))
+  def foreach(f: T => Unit)(implicit trace: Trace): Task[Unit] =
+    action(_.foreach(f))
 
-  def foreachPartition(f: Iterator[T] => Unit)(implicit trace: Trace): Task[Unit] = action(_.foreachPartition(f))
+  def foreachPartition(f: Iterator[T] => Unit)(implicit trace: Trace): Task[Unit] =
+    action(_.foreachPartition(f))
 
-  def isEmpty(implicit trace: Trace): Task[Boolean] = action(_.isEmpty())
+  def isEmpty(implicit trace: Trace): Task[Boolean] =
+    action(_.isEmpty())
 
   def iterator(split: => Partition, context: => TaskContext)(implicit trace: Trace): Task[Iterator[T]] =
     action(_.iterator(split, context))
 
-  def max(implicit ord: Ordering[T], trace: Trace): Task[T] = action(_.max())
+  def max(implicit ord: Ordering[T], trace: Trace): Task[T] =
+    action(_.max())
 
-  def min(implicit ord: Ordering[T], trace: Trace): Task[T] = action(_.min())
+  def min(implicit ord: Ordering[T], trace: Trace): Task[T] =
+    action(_.min())
 
-  def reduce(f: (T, T) => T)(implicit trace: Trace): Task[T] = action(_.reduce(f))
+  def reduce(f: (T, T) => T)(implicit trace: Trace): Task[T] =
+    action(_.reduce(f))
 
-  def saveAsObjectFile(path: => String)(implicit trace: Trace): Task[Unit] = action(_.saveAsObjectFile(path))
+  def saveAsObjectFile(path: => String)(implicit trace: Trace): Task[Unit] =
+    action(_.saveAsObjectFile(path))
 
-  def saveAsTextFile(path: => String)(implicit trace: Trace): Task[Unit] = action(_.saveAsTextFile(path))
+  def saveAsTextFile(path: => String)(implicit trace: Trace): Task[Unit] =
+    action(_.saveAsTextFile(path))
 
   def saveAsTextFile(path: => String, codec: => Class[_ <: CompressionCodec])(implicit trace: Trace): Task[Unit] =
     action(_.saveAsTextFile(path, codec))
 
-  def take(num: => Int)(implicit trace: Trace): Task[Seq[T]] = action(_.take(num).toSeq)
+  def take(num: => Int)(implicit trace: Trace): Task[Seq[T]] =
+    action(_.take(num).toSeq)
 
-  def takeOrdered(num: => Int)(implicit ord: Ordering[T], trace: Trace): Task[Seq[T]] = action(_.takeOrdered(num).toSeq)
+  def takeOrdered(num: => Int)(implicit ord: Ordering[T], trace: Trace): Task[Seq[T]] =
+    action(_.takeOrdered(num).toSeq)
 
   def takeSample(withReplacement: => Boolean, num: => Int, seed: Long)(implicit trace: Trace): Task[Seq[T]] =
     action(_.takeSample(withReplacement, num, seed).toSeq)
 
-  def toLocalIterator(implicit trace: Trace): Task[Iterator[T]] = action(_.toLocalIterator)
+  def toLocalIterator(implicit trace: Trace): Task[Iterator[T]] =
+    action(_.toLocalIterator)
 
-  def top(num: => Int)(implicit ord: Ordering[T], trace: Trace): Task[Seq[T]] = action(_.top(num).toSeq)
+  def top(num: => Int)(implicit ord: Ordering[T], trace: Trace): Task[Seq[T]] =
+    action(_.top(num).toSeq)
 
-  def treeAggregate[U: ClassTag](zeroValue: => U)(seqOp: (U, T) => U, combOp: (U, U) => U, depth: => Int = 2)(implicit
-      trace: Trace
-  ): Task[U] = action(_.treeAggregate[U](zeroValue)(seqOp, combOp, depth))
+  def treeAggregate[U: ClassTag](
+      zeroValue: => U
+  )(seqOp: (U, T) => U, combOp: (U, U) => U, depth: => Int = 2)(implicit trace: Trace): Task[U] =
+    action(_.treeAggregate[U](zeroValue)(seqOp, combOp, depth))
 
   def treeAggregate[U: ClassTag](
       zeroValue: => U,
@@ -126,39 +152,54 @@ final case class RDD[T](underlying: UnderlyingRDD[T]) { self =>
   )(implicit trace: Trace): Task[U] =
     action(_.treeAggregate[U](zeroValue, seqOp, combOp, depth, finalAggregateOnExecutor))
 
-  def treeReduce(f: (T, T) => T, depth: => Int = 2)(implicit trace: Trace): Task[T] = action(_.treeReduce(f, depth))
+  def treeReduce(f: (T, T) => T, depth: => Int = 2)(implicit trace: Trace): Task[T] =
+    action(_.treeReduce(f, depth))
 
   // ===============
 
-  def barrier(implicit trace: Trace): Task[RDDBarrier[T]] = action(_.barrier())
+  def barrier(implicit trace: Trace): Task[RDDBarrier[T]] =
+    action(_.barrier())
 
-  def cache(implicit trace: Trace): Task[RDD[T]] = action(_.cache())
+  def cache(implicit trace: Trace): Task[RDD[T]] =
+    action(_.cache())
 
-  def checkpoint(implicit trace: Trace): Task[Unit] = action(_.checkpoint())
+  def checkpoint(implicit trace: Trace): Task[Unit] =
+    action(_.checkpoint())
 
-  def dependencies(implicit trace: Trace): Task[Seq[Dependency[_]]] = action(_.dependencies)
+  def dependencies(implicit trace: Trace): Task[Seq[Dependency[_]]] =
+    action(_.dependencies)
 
-  def getCheckpointFile(implicit trace: Trace): Task[Option[String]] = action(_.getCheckpointFile)
+  def getCheckpointFile(implicit trace: Trace): Task[Option[String]] =
+    action(_.getCheckpointFile)
 
-  def getResourceProfile(implicit trace: Trace): Task[ResourceProfile] = action(_.getResourceProfile())
+  def getResourceProfile(implicit trace: Trace): Task[ResourceProfile] =
+    action(_.getResourceProfile())
 
-  def getStorageLevel(implicit trace: Trace): Task[StorageLevel] = action(_.getStorageLevel)
+  def getStorageLevel(implicit trace: Trace): Task[StorageLevel] =
+    action(_.getStorageLevel)
 
-  def isCheckpointed(implicit trace: Trace): Task[Boolean] = action(_.isCheckpointed)
+  def isCheckpointed(implicit trace: Trace): Task[Boolean] =
+    action(_.isCheckpointed)
 
-  def localCheckpoint(implicit trace: Trace): Task[RDD[T]] = action(_.localCheckpoint())
+  def localCheckpoint(implicit trace: Trace): Task[RDD[T]] =
+    action(_.localCheckpoint())
 
-  def persist(newLevel: => StorageLevel)(implicit trace: Trace): Task[RDD[T]] = action(_.persist(newLevel))
+  def persist(newLevel: => StorageLevel)(implicit trace: Trace): Task[RDD[T]] =
+    action(_.persist(newLevel))
 
-  def persist(implicit trace: Trace): Task[RDD[T]] = action(_.persist())
+  def persist(implicit trace: Trace): Task[RDD[T]] =
+    action(_.persist())
 
-  def unpersist(blocking: => Boolean = false)(implicit trace: Trace): Task[RDD[T]] = action(_.unpersist(blocking))
+  def unpersist(blocking: => Boolean = false)(implicit trace: Trace): Task[RDD[T]] =
+    action(_.unpersist(blocking))
 
   // ===============
 
-  def ++(other: RDD[T]): RDD[T] = transformation(_.++(other.underlying))
+  def ++(other: RDD[T]): RDD[T] =
+    transformation(_.++(other.underlying))
 
-  def cartesian[U: ClassTag](other: RDD[U]): RDD[(T, U)] = transformation(_.cartesian[U](other.underlying))
+  def cartesian[U: ClassTag](other: RDD[U]): RDD[(T, U)] =
+    transformation(_.cartesian[U](other.underlying))
 
   def coalesce(
       numPartitions: Int,
@@ -170,15 +211,20 @@ final case class RDD[T](underlying: UnderlyingRDD[T]) { self =>
   def distinct(numPartitions: Int)(implicit ord: Ordering[T] = noOrdering): RDD[T] =
     transformation(_.distinct(numPartitions))
 
-  def distinct: RDD[T] = transformation(_.distinct())
+  def distinct: RDD[T] =
+    transformation(_.distinct())
 
-  def filter(f: T => Boolean): RDD[T] = transformation(_.filter(f))
+  def filter(f: T => Boolean): RDD[T] =
+    transformation(_.filter(f))
 
-  def flatMap[U: ClassTag](f: T => TraversableOnce[U]): RDD[U] = transformation(_.flatMap[U](f))
+  def flatMap[U: ClassTag](f: T => TraversableOnce[U]): RDD[U] =
+    transformation(_.flatMap[U](f))
 
-  def glom: RDD[Seq[T]] = transformation(_.glom().map(_.toSeq))
+  def glom: RDD[Seq[T]] =
+    transformation(_.glom().map(_.toSeq))
 
-  def intersection(other: RDD[T]): RDD[T] = transformation(_.intersection(other.underlying))
+  def intersection(other: RDD[T]): RDD[T] =
+    transformation(_.intersection(other.underlying))
 
   def intersection(other: RDD[T], partitioner: Partitioner)(implicit ord: Ordering[T] = noOrdering): RDD[T] =
     transformation(_.intersection(other.underlying, partitioner))
@@ -186,9 +232,11 @@ final case class RDD[T](underlying: UnderlyingRDD[T]) { self =>
   def intersection(other: RDD[T], numPartitions: Int): RDD[T] =
     transformation(_.intersection(other.underlying, numPartitions))
 
-  def keyBy[K](f: T => K): RDD[(K, T)] = transformation(_.keyBy[K](f))
+  def keyBy[K](f: T => K): RDD[(K, T)] =
+    transformation(_.keyBy[K](f))
 
-  def map[U: ClassTag](f: T => U): RDD[U] = transformation(_.map[U](f))
+  def map[U: ClassTag](f: T => U): RDD[U] =
+    transformation(_.map[U](f))
 
   def mapPartitions[U: ClassTag](f: Iterator[T] => Iterator[U], preservesPartitioning: Boolean = false): RDD[U] =
     transformation(_.mapPartitions[U](f, preservesPartitioning))
@@ -196,11 +244,14 @@ final case class RDD[T](underlying: UnderlyingRDD[T]) { self =>
   def mapPartitionsWithIndex[U: ClassTag](
       f: (Int, Iterator[T]) => Iterator[U],
       preservesPartitioning: Boolean = false
-  ): RDD[U] = transformation(_.mapPartitionsWithIndex[U](f, preservesPartitioning))
+  ): RDD[U] =
+    transformation(_.mapPartitionsWithIndex[U](f, preservesPartitioning))
 
-  def pipe(command: String): RDD[String] = transformation(_.pipe(command))
+  def pipe(command: String): RDD[String] =
+    transformation(_.pipe(command))
 
-  def pipe(command: String, env: Map[String, String]): RDD[String] = transformation(_.pipe(command, env))
+  def pipe(command: String, env: Map[String, String]): RDD[String] =
+    transformation(_.pipe(command, env))
 
   def pipe(
       command: Seq[String],
@@ -222,35 +273,44 @@ final case class RDD[T](underlying: UnderlyingRDD[T]) { self =>
   def sortBy[K](f: (T) => K, ascending: Boolean = true, numPartitions: Int = this.partitions.length)(implicit
       ord: Ordering[K],
       ctag: ClassTag[K]
-  ): RDD[T] = transformation(_.sortBy[K](f, ascending, numPartitions))
+  ): RDD[T] =
+    transformation(_.sortBy[K](f, ascending, numPartitions))
 
-  def subtract(other: RDD[T]): RDD[T] = transformation(_.subtract(other.underlying))
+  def subtract(other: RDD[T]): RDD[T] =
+    transformation(_.subtract(other.underlying))
 
-  def subtract(other: RDD[T], numPartitions: Int): RDD[T] = transformation(_.subtract(other.underlying, numPartitions))
+  def subtract(other: RDD[T], numPartitions: Int): RDD[T] =
+    transformation(_.subtract(other.underlying, numPartitions))
 
   def subtract(other: RDD[T], p: Partitioner)(implicit ord: Ordering[T] = noOrdering): RDD[T] =
     transformation(_.subtract(other.underlying, p))
 
-  def union(other: RDD[T]): RDD[T] = transformation(_.union(other.underlying))
+  def union(other: RDD[T]): RDD[T] =
+    transformation(_.union(other.underlying))
 
-  def withResources(rp: ResourceProfile): RDD[T] = transformation(_.withResources(rp))
+  def withResources(rp: ResourceProfile): RDD[T] =
+    transformation(_.withResources(rp))
 
-  def zip[U: ClassTag](other: RDD[U]): RDD[(T, U)] = transformation(_.zip[U](other.underlying))
+  def zip[U: ClassTag](other: RDD[U]): RDD[(T, U)] =
+    transformation(_.zip[U](other.underlying))
 
   def zipPartitions[B: ClassTag, V: ClassTag](rdd2: RDD[B], preservesPartitioning: Boolean)(
       f: (Iterator[T], Iterator[B]) => Iterator[V]
-  ): RDD[V] = transformation(_.zipPartitions[B, V](rdd2.underlying, preservesPartitioning)(f))
+  ): RDD[V] =
+    transformation(_.zipPartitions[B, V](rdd2.underlying, preservesPartitioning)(f))
 
   def zipPartitions[B: ClassTag, V: ClassTag](rdd2: RDD[B])(f: (Iterator[T], Iterator[B]) => Iterator[V]): RDD[V] =
     transformation(_.zipPartitions[B, V](rdd2.underlying)(f))
 
   def zipPartitions[B: ClassTag, C: ClassTag, V: ClassTag](rdd2: RDD[B], rdd3: RDD[C], preservesPartitioning: Boolean)(
       f: (Iterator[T], Iterator[B], Iterator[C]) => Iterator[V]
-  ): RDD[V] = transformation(_.zipPartitions[B, C, V](rdd2.underlying, rdd3.underlying, preservesPartitioning)(f))
+  ): RDD[V] =
+    transformation(_.zipPartitions[B, C, V](rdd2.underlying, rdd3.underlying, preservesPartitioning)(f))
 
   def zipPartitions[B: ClassTag, C: ClassTag, V: ClassTag](rdd2: RDD[B], rdd3: RDD[C])(
       f: (Iterator[T], Iterator[B], Iterator[C]) => Iterator[V]
-  ): RDD[V] = transformation(_.zipPartitions[B, C, V](rdd2.underlying, rdd3.underlying)(f))
+  ): RDD[V] =
+    transformation(_.zipPartitions[B, C, V](rdd2.underlying, rdd3.underlying)(f))
 
   def zipPartitions[B: ClassTag, C: ClassTag, D: ClassTag, V: ClassTag](
       rdd2: RDD[B],
@@ -264,11 +324,14 @@ final case class RDD[T](underlying: UnderlyingRDD[T]) { self =>
 
   def zipPartitions[B: ClassTag, C: ClassTag, D: ClassTag, V: ClassTag](rdd2: RDD[B], rdd3: RDD[C], rdd4: RDD[D])(
       f: (Iterator[T], Iterator[B], Iterator[C], Iterator[D]) => Iterator[V]
-  ): RDD[V] = transformation(_.zipPartitions[B, C, D, V](rdd2.underlying, rdd3.underlying, rdd4.underlying)(f))
+  ): RDD[V] =
+    transformation(_.zipPartitions[B, C, D, V](rdd2.underlying, rdd3.underlying, rdd4.underlying)(f))
 
-  def zipWithIndex: RDD[(T, Long)] = transformation(_.zipWithIndex())
+  def zipWithIndex: RDD[(T, Long)] =
+    transformation(_.zipWithIndex())
 
-  def zipWithUniqueId: RDD[(T, Long)] = transformation(_.zipWithUniqueId())
+  def zipWithUniqueId: RDD[(T, Long)] =
+    transformation(_.zipWithUniqueId())
 
   // ===============
 

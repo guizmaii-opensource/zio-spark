@@ -38,25 +38,31 @@ import java.io.IOException
 @nowarn("cat=deprecation")
 final case class Dataset[T](underlying: UnderlyingDataset[T]) { self =>
   // scalafix:off
-  implicit private def lift[U](x: UnderlyingDataset[U]): Dataset[U]                        = Dataset(x)
-  implicit private def iteratorConversion[U](iterator: java.util.Iterator[U]): Iterator[U] = iterator.asScala
+  implicit private def lift[U](x: UnderlyingDataset[U]): Dataset[U] =
+    Dataset(x)
+  implicit private def iteratorConversion[U](iterator: java.util.Iterator[U]): Iterator[U] =
+    iterator.asScala
   implicit private def liftDataFrameNaFunctions(x: UnderlyingDataFrameNaFunctions): DataFrameNaFunctions =
     DataFrameNaFunctions(x)
   implicit private def liftDataFrameStatFunctions(x: UnderlyingDataFrameStatFunctions): DataFrameStatFunctions =
     DataFrameStatFunctions(x)
   implicit private def liftRelationalGroupedDataset[U](
       x: UnderlyingRelationalGroupedDataset
-  ): RelationalGroupedDataset = RelationalGroupedDataset(x)
+  ): RelationalGroupedDataset =
+    RelationalGroupedDataset(x)
   implicit private def liftKeyValueGroupedDataset[K, V](
       x: UnderlyingKeyValueGroupedDataset[K, V]
-  ): KeyValueGroupedDataset[K, V] = KeyValueGroupedDataset(x)
+  ): KeyValueGroupedDataset[K, V] =
+    KeyValueGroupedDataset(x)
   // scalafix:on
 
   /** Applies an action to the underlying Dataset. */
-  def action[U](f: UnderlyingDataset[T] => U)(implicit trace: Trace): Task[U] = ZIO.attempt(get(f))
+  def action[U](f: UnderlyingDataset[T] => U)(implicit trace: Trace): Task[U] =
+    ZIO.attempt(get(f))
 
   /** Applies a transformation to the underlying Dataset. */
-  def transformation[TNew](f: UnderlyingDataset[T] => UnderlyingDataset[TNew]): Dataset[TNew] = Dataset(f(underlying))
+  def transformation[TNew](f: UnderlyingDataset[T] => UnderlyingDataset[TNew]): Dataset[TNew] =
+    Dataset(f(underlying))
 
   /**
    * Applies a transformation to the underlying Dataset, it is used for
@@ -72,7 +78,8 @@ final case class Dataset[T](underlying: UnderlyingDataset[T]) { self =>
    * Applies an action to the underlying Dataset, it is used for
    * transformations that can fail due to an AnalysisException.
    */
-  def getWithAnalysis[U](f: UnderlyingDataset[T] => U): TryAnalysis[U] = TryAnalysis(f(underlying))
+  def getWithAnalysis[U](f: UnderlyingDataset[T] => U): TryAnalysis[U] =
+    TryAnalysis(f(underlying))
 
   // Handmade functions specific to zio-spark
 
@@ -139,9 +146,11 @@ final case class Dataset[T](underlying: UnderlyingDataset[T]) { self =>
 
   // Generated functions coming from spark
 
-  def columns: Seq[String] = get(_.columns.toSeq)
+  def columns: Seq[String] =
+    get(_.columns.toSeq)
 
-  def groupByKey[K: Encoder](func: T => K): KeyValueGroupedDataset[K, T] = get(_.groupByKey[K](func))
+  def groupByKey[K: Encoder](func: T => K): KeyValueGroupedDataset[K, T] =
+    get(_.groupByKey[K](func))
 
   // scalastyle:on println
   /**
@@ -154,60 +163,83 @@ final case class Dataset[T](underlying: UnderlyingDataset[T]) { self =>
    * @group untypedrel
    * @since 1.6.0
    */
-  def na: DataFrameNaFunctions = get(_.na)
+  def na: DataFrameNaFunctions =
+    get(_.na)
 
-  def schema: StructType = get(_.schema)
+  def schema: StructType =
+    get(_.schema)
 
-  def stat: DataFrameStatFunctions = get(_.stat)
+  def stat: DataFrameStatFunctions =
+    get(_.stat)
 
   // ===============
 
-  def col(colName: String): TryAnalysis[Column] = getWithAnalysis(_.col(colName))
+  def col(colName: String): TryAnalysis[Column] =
+    getWithAnalysis(_.col(colName))
 
-  def colRegex(colName: String): TryAnalysis[Column] = getWithAnalysis(_.colRegex(colName))
+  def colRegex(colName: String): TryAnalysis[Column] =
+    getWithAnalysis(_.colRegex(colName))
 
-  def cube(cols: Column*): TryAnalysis[RelationalGroupedDataset] = getWithAnalysis(_.cube(cols: _*))
+  def cube(cols: Column*): TryAnalysis[RelationalGroupedDataset] =
+    getWithAnalysis(_.cube(cols: _*))
 
-  def cube(col1: String, cols: String*): TryAnalysis[RelationalGroupedDataset] = getWithAnalysis(_.cube(col1, cols: _*))
+  def cube(col1: String, cols: String*): TryAnalysis[RelationalGroupedDataset] =
+    getWithAnalysis(_.cube(col1, cols: _*))
 
-  def rollup(cols: Column*): TryAnalysis[RelationalGroupedDataset] = getWithAnalysis(_.rollup(cols: _*))
+  def rollup(cols: Column*): TryAnalysis[RelationalGroupedDataset] =
+    getWithAnalysis(_.rollup(cols: _*))
 
   def rollup(col1: String, cols: String*): TryAnalysis[RelationalGroupedDataset] =
     getWithAnalysis(_.rollup(col1, cols: _*))
 
   // ===============
 
-  def collect(implicit trace: Trace): Task[Seq[T]] = action(_.collect().toSeq)
+  def collect(implicit trace: Trace): Task[Seq[T]] =
+    action(_.collect().toSeq)
 
-  def count(implicit trace: Trace): Task[Long] = action(_.count())
+  def count(implicit trace: Trace): Task[Long] =
+    action(_.count())
 
-  def first(implicit trace: Trace): Task[T] = action(_.first())
+  def first(implicit trace: Trace): Task[T] =
+    action(_.first())
 
-  def foreach(f: T => Unit)(implicit trace: Trace): Task[Unit] = action(_.foreach(f))
+  def foreach(f: T => Unit)(implicit trace: Trace): Task[Unit] =
+    action(_.foreach(f))
 
-  def foreachPartition(f: Iterator[T] => Unit)(implicit trace: Trace): Task[Unit] = action(_.foreachPartition(f))
+  def foreachPartition(f: Iterator[T] => Unit)(implicit trace: Trace): Task[Unit] =
+    action(_.foreachPartition(f))
 
-  def head(n: => Int)(implicit trace: Trace): Task[Seq[T]] = action(_.head(n).toSeq)
+  def head(n: => Int)(implicit trace: Trace): Task[Seq[T]] =
+    action(_.head(n).toSeq)
 
-  def head(implicit trace: Trace): Task[T] = action(_.head())
+  def head(implicit trace: Trace): Task[T] =
+    action(_.head())
 
-  def isEmpty(implicit trace: Trace): Task[Boolean] = action(_.isEmpty)
+  def isEmpty(implicit trace: Trace): Task[Boolean] =
+    action(_.isEmpty)
 
-  def reduce(func: (T, T) => T)(implicit trace: Trace): Task[T] = action(_.reduce(func))
+  def reduce(func: (T, T) => T)(implicit trace: Trace): Task[T] =
+    action(_.reduce(func))
 
-  def tail(n: => Int)(implicit trace: Trace): Task[Seq[T]] = action(_.tail(n).toSeq)
+  def tail(n: => Int)(implicit trace: Trace): Task[Seq[T]] =
+    action(_.tail(n).toSeq)
 
-  def take(n: => Int)(implicit trace: Trace): Task[Seq[T]] = action(_.take(n).toSeq)
+  def take(n: => Int)(implicit trace: Trace): Task[Seq[T]] =
+    action(_.take(n).toSeq)
 
-  def toLocalIterator(implicit trace: Trace): Task[Iterator[T]] = action(_.toLocalIterator())
+  def toLocalIterator(implicit trace: Trace): Task[Iterator[T]] =
+    action(_.toLocalIterator())
 
   // ===============
 
-  def cache(implicit trace: Trace): Task[Dataset[T]] = action(_.cache())
+  def cache(implicit trace: Trace): Task[Dataset[T]] =
+    action(_.cache())
 
-  def checkpoint(implicit trace: Trace): Task[Dataset[T]] = action(_.checkpoint())
+  def checkpoint(implicit trace: Trace): Task[Dataset[T]] =
+    action(_.checkpoint())
 
-  def checkpoint(eager: => Boolean)(implicit trace: Trace): Task[Dataset[T]] = action(_.checkpoint(eager))
+  def checkpoint(eager: => Boolean)(implicit trace: Trace): Task[Dataset[T]] =
+    action(_.checkpoint(eager))
 
   def createGlobalTempView(viewName: => String)(implicit trace: Trace): Task[Unit] =
     action(_.createGlobalTempView(viewName))
@@ -218,95 +250,135 @@ final case class Dataset[T](underlying: UnderlyingDataset[T]) { self =>
   def createOrReplaceTempView(viewName: => String)(implicit trace: Trace): Task[Unit] =
     action(_.createOrReplaceTempView(viewName))
 
-  def createTempView(viewName: => String)(implicit trace: Trace): Task[Unit] = action(_.createTempView(viewName))
+  def createTempView(viewName: => String)(implicit trace: Trace): Task[Unit] =
+    action(_.createTempView(viewName))
 
-  def dtypes(implicit trace: Trace): Task[Seq[(String, String)]] = action(_.dtypes.toSeq)
+  def dtypes(implicit trace: Trace): Task[Seq[(String, String)]] =
+    action(_.dtypes.toSeq)
 
-  def inputFiles(implicit trace: Trace): Task[Seq[String]] = action(_.inputFiles.toSeq)
+  def inputFiles(implicit trace: Trace): Task[Seq[String]] =
+    action(_.inputFiles.toSeq)
 
-  def isLocal(implicit trace: Trace): Task[Boolean] = action(_.isLocal)
+  def isLocal(implicit trace: Trace): Task[Boolean] =
+    action(_.isLocal)
 
-  def isStreaming(implicit trace: Trace): Task[Boolean] = action(_.isStreaming)
+  def isStreaming(implicit trace: Trace): Task[Boolean] =
+    action(_.isStreaming)
 
-  def localCheckpoint(implicit trace: Trace): Task[Dataset[T]] = action(_.localCheckpoint())
+  def localCheckpoint(implicit trace: Trace): Task[Dataset[T]] =
+    action(_.localCheckpoint())
 
-  def localCheckpoint(eager: => Boolean)(implicit trace: Trace): Task[Dataset[T]] = action(_.localCheckpoint(eager))
+  def localCheckpoint(eager: => Boolean)(implicit trace: Trace): Task[Dataset[T]] =
+    action(_.localCheckpoint(eager))
 
-  def persist(implicit trace: Trace): Task[Dataset[T]] = action(_.persist())
+  def persist(implicit trace: Trace): Task[Dataset[T]] =
+    action(_.persist())
 
-  def persist(newLevel: => StorageLevel)(implicit trace: Trace): Task[Dataset[T]] = action(_.persist(newLevel))
+  def persist(newLevel: => StorageLevel)(implicit trace: Trace): Task[Dataset[T]] =
+    action(_.persist(newLevel))
 
   @deprecated("Use createOrReplaceTempView(viewName) instead.", "2.0.0")
   def registerTempTable(tableName: => String)(implicit trace: Trace): Task[Unit] =
     action(_.registerTempTable(tableName))
 
-  def storageLevel(implicit trace: Trace): Task[StorageLevel] = action(_.storageLevel)
+  def storageLevel(implicit trace: Trace): Task[StorageLevel] =
+    action(_.storageLevel)
 
-  def unpersist(blocking: => Boolean)(implicit trace: Trace): Task[Dataset[T]] = action(_.unpersist(blocking))
+  def unpersist(blocking: => Boolean)(implicit trace: Trace): Task[Dataset[T]] =
+    action(_.unpersist(blocking))
 
-  def unpersist(implicit trace: Trace): Task[Dataset[T]] = action(_.unpersist())
+  def unpersist(implicit trace: Trace): Task[Dataset[T]] =
+    action(_.unpersist())
 
   // ===============
 
-  def alias(alias: String): Dataset[T] = transformation(_.alias(alias))
+  def alias(alias: String): Dataset[T] =
+    transformation(_.alias(alias))
 
-  def alias(alias: Symbol): Dataset[T] = transformation(_.alias(alias))
+  def alias(alias: Symbol): Dataset[T] =
+    transformation(_.alias(alias))
 
-  def as(alias: String): Dataset[T] = transformation(_.as(alias))
+  def as(alias: String): Dataset[T] =
+    transformation(_.as(alias))
 
-  def as(alias: Symbol): Dataset[T] = transformation(_.as(alias))
+  def as(alias: Symbol): Dataset[T] =
+    transformation(_.as(alias))
 
-  def coalesce(numPartitions: Int): Dataset[T] = transformation(_.coalesce(numPartitions))
+  def coalesce(numPartitions: Int): Dataset[T] =
+    transformation(_.coalesce(numPartitions))
 
-  def crossJoin(right: Dataset[_]): DataFrame = transformation(_.crossJoin(right.underlying))
+  def crossJoin(right: Dataset[_]): DataFrame =
+    transformation(_.crossJoin(right.underlying))
 
-  def distinct: Dataset[T] = transformation(_.distinct())
+  def distinct: Dataset[T] =
+    transformation(_.distinct())
 
-  def drop(colName: String): DataFrame = transformation(_.drop(colName))
+  def drop(colName: String): DataFrame =
+    transformation(_.drop(colName))
 
-  def drop(colNames: String*): DataFrame = transformation(_.drop(colNames: _*))
+  def drop(colNames: String*): DataFrame =
+    transformation(_.drop(colNames: _*))
 
-  def drop(col: Column): DataFrame = transformation(_.drop(col))
+  def drop(col: Column): DataFrame =
+    transformation(_.drop(col))
 
-  def drop(col: Column, cols: Column*): DataFrame = transformation(_.drop(col, cols: _*))
+  def drop(col: Column, cols: Column*): DataFrame =
+    transformation(_.drop(col, cols: _*))
 
-  def dropDuplicates: Dataset[T] = transformation(_.dropDuplicates())
+  def dropDuplicates: Dataset[T] =
+    transformation(_.dropDuplicates())
 
-  def dropDuplicatesWithinWatermark: Dataset[T] = transformation(_.dropDuplicatesWithinWatermark())
+  def dropDuplicatesWithinWatermark: Dataset[T] =
+    transformation(_.dropDuplicatesWithinWatermark())
 
-  def except(other: Dataset[T]): Dataset[T] = transformation(_.except(other.underlying))
+  def except(other: Dataset[T]): Dataset[T] =
+    transformation(_.except(other.underlying))
 
-  def exceptAll(other: Dataset[T]): Dataset[T] = transformation(_.exceptAll(other.underlying))
+  def exceptAll(other: Dataset[T]): Dataset[T] =
+    transformation(_.exceptAll(other.underlying))
 
   @deprecated("use flatMap() or select() with functions.explode() instead", "2.0.0")
   def explode[A <: Product: TypeTag](input: Column*)(f: Row => TraversableOnce[A]): DataFrame =
     transformation(_.explode[A](input: _*)(f))
 
-  def filter(func: T => Boolean): Dataset[T] = transformation(_.filter(func))
+  def filter(func: T => Boolean): Dataset[T] =
+    transformation(_.filter(func))
 
-  def flatMap[U: Encoder](func: T => TraversableOnce[U]): Dataset[U] = transformation(_.flatMap[U](func))
+  def flatMap[U: Encoder](func: T => TraversableOnce[U]): Dataset[U] =
+    transformation(_.flatMap[U](func))
 
-  def hint(name: String, parameters: Any*): Dataset[T] = transformation(_.hint(name, parameters: _*))
+  def hint(name: String, parameters: Any*): Dataset[T] =
+    transformation(_.hint(name, parameters: _*))
 
-  def intersect(other: Dataset[T]): Dataset[T] = transformation(_.intersect(other.underlying))
+  def intersect(other: Dataset[T]): Dataset[T] =
+    transformation(_.intersect(other.underlying))
 
-  def intersectAll(other: Dataset[T]): Dataset[T] = transformation(_.intersectAll(other.underlying))
+  def intersectAll(other: Dataset[T]): Dataset[T] =
+    transformation(_.intersectAll(other.underlying))
 
-  def join(right: Dataset[_]): DataFrame = transformation(_.join(right.underlying))
+  def join(right: Dataset[_]): DataFrame =
+    transformation(_.join(right.underlying))
 
-  def limit(n: Int): Dataset[T] = transformation(_.limit(n))
+  def limit(n: Int): Dataset[T] =
+    transformation(_.limit(n))
 
-  def map[U: Encoder](func: T => U): Dataset[U] = transformation(_.map[U](func))
+  def map[U: Encoder](func: T => U): Dataset[U] =
+    transformation(_.map[U](func))
 
-  def mapPartitions[U: Encoder](func: Iterator[T] => Iterator[U]): Dataset[U] = transformation(_.mapPartitions[U](func))
+  def mapPartitions[U: Encoder](func: Iterator[T] => Iterator[U]): Dataset[U] =
+    transformation(_.mapPartitions[U](func))
 
-  def offset(n: Int): Dataset[T] = transformation(_.offset(n))
+  def offset(n: Int): Dataset[T] =
+    transformation(_.offset(n))
 
-  def repartition(numPartitions: Int): Dataset[T] = transformation(_.repartition(numPartitions))
+  def repartition(numPartitions: Int): Dataset[T] =
+    transformation(_.repartition(numPartitions))
 
-  def sample(fraction: Double, seed: Long): Dataset[T] = transformation(_.sample(fraction, seed))
+  def sample(fraction: Double, seed: Long): Dataset[T] =
+    transformation(_.sample(fraction, seed))
 
-  def sample(fraction: Double): Dataset[T] = transformation(_.sample(fraction))
+  def sample(fraction: Double): Dataset[T] =
+    transformation(_.sample(fraction))
 
   def sample(withReplacement: Boolean, fraction: Double, seed: Long): Dataset[T] =
     transformation(_.sample(withReplacement, fraction, seed))
@@ -314,7 +386,8 @@ final case class Dataset[T](underlying: UnderlyingDataset[T]) { self =>
   def sample(withReplacement: Boolean, fraction: Double): Dataset[T] =
     transformation(_.sample(withReplacement, fraction))
 
-  def select[U1](c1: TypedColumn[T, U1]): Dataset[U1] = transformation(_.select[U1](c1))
+  def select[U1](c1: TypedColumn[T, U1]): Dataset[U1] =
+    transformation(_.select[U1](c1))
 
   def select[U1, U2](c1: TypedColumn[T, U1], c2: TypedColumn[T, U2]): Dataset[(U1, U2)] =
     transformation(_.select[U1, U2](c1, c2))
@@ -323,14 +396,16 @@ final case class Dataset[T](underlying: UnderlyingDataset[T]) { self =>
       c1: TypedColumn[T, U1],
       c2: TypedColumn[T, U2],
       c3: TypedColumn[T, U3]
-  ): Dataset[(U1, U2, U3)] = transformation(_.select[U1, U2, U3](c1, c2, c3))
+  ): Dataset[(U1, U2, U3)] =
+    transformation(_.select[U1, U2, U3](c1, c2, c3))
 
   def select[U1, U2, U3, U4](
       c1: TypedColumn[T, U1],
       c2: TypedColumn[T, U2],
       c3: TypedColumn[T, U3],
       c4: TypedColumn[T, U4]
-  ): Dataset[(U1, U2, U3, U4)] = transformation(_.select[U1, U2, U3, U4](c1, c2, c3, c4))
+  ): Dataset[(U1, U2, U3, U4)] =
+    transformation(_.select[U1, U2, U3, U4](c1, c2, c3, c4))
 
   def select[U1, U2, U3, U4, U5](
       c1: TypedColumn[T, U1],
@@ -338,23 +413,31 @@ final case class Dataset[T](underlying: UnderlyingDataset[T]) { self =>
       c3: TypedColumn[T, U3],
       c4: TypedColumn[T, U4],
       c5: TypedColumn[T, U5]
-  ): Dataset[(U1, U2, U3, U4, U5)] = transformation(_.select[U1, U2, U3, U4, U5](c1, c2, c3, c4, c5))
+  ): Dataset[(U1, U2, U3, U4, U5)] =
+    transformation(_.select[U1, U2, U3, U4, U5](c1, c2, c3, c4, c5))
 
-  def summary(statistics: String*): DataFrame = transformation(_.summary(statistics: _*))
+  def summary(statistics: String*): DataFrame =
+    transformation(_.summary(statistics: _*))
 
-  def to(schema: StructType): DataFrame = transformation(_.to(schema))
+  def to(schema: StructType): DataFrame =
+    transformation(_.to(schema))
 
   // This is declared with parentheses to prevent the Scala compiler from treating
   // `ds.toDF("1")` as invoking this toDF and then apply on the returned DataFrame.
-  def toDF: DataFrame = transformation(_.toDF())
+  def toDF: DataFrame =
+    transformation(_.toDF())
 
-  def toJSON: Dataset[String] = transformation(_.toJSON)
+  def toJSON: Dataset[String] =
+    transformation(_.toJSON)
 
-  def union(other: Dataset[T]): Dataset[T] = transformation(_.union(other.underlying))
+  def union(other: Dataset[T]): Dataset[T] =
+    transformation(_.union(other.underlying))
 
-  def unionAll(other: Dataset[T]): Dataset[T] = transformation(_.unionAll(other.underlying))
+  def unionAll(other: Dataset[T]): Dataset[T] =
+    transformation(_.unionAll(other.underlying))
 
-  def unionByName(other: Dataset[T]): Dataset[T] = transformation(_.unionByName(other.underlying))
+  def unionByName(other: Dataset[T]): Dataset[T] =
+    transformation(_.unionByName(other.underlying))
 
   def withColumnRenamed(existingName: String, newName: String): DataFrame =
     transformation(_.withColumnRenamed(existingName, newName))
@@ -369,13 +452,17 @@ final case class Dataset[T](underlying: UnderlyingDataset[T]) { self =>
   def agg(aggExpr: (String, String), aggExprs: (String, String)*): TryAnalysis[DataFrame] =
     transformationWithAnalysis(_.agg(aggExpr, aggExprs: _*))
 
-  def agg(exprs: Map[String, String]): TryAnalysis[DataFrame] = transformationWithAnalysis(_.agg(exprs))
+  def agg(exprs: Map[String, String]): TryAnalysis[DataFrame] =
+    transformationWithAnalysis(_.agg(exprs))
 
-  def agg(expr: Column, exprs: Column*): TryAnalysis[DataFrame] = transformationWithAnalysis(_.agg(expr, exprs: _*))
+  def agg(expr: Column, exprs: Column*): TryAnalysis[DataFrame] =
+    transformationWithAnalysis(_.agg(expr, exprs: _*))
 
-  def as[U: Encoder]: TryAnalysis[Dataset[U]] = transformationWithAnalysis(_.as[U])
+  def as[U: Encoder]: TryAnalysis[Dataset[U]] =
+    transformationWithAnalysis(_.as[U])
 
-  def describe(cols: String*): TryAnalysis[DataFrame] = transformationWithAnalysis(_.describe(cols: _*))
+  def describe(cols: String*): TryAnalysis[DataFrame] =
+    transformationWithAnalysis(_.describe(cols: _*))
 
   def dropDuplicates(colNames: Seq[String]): TryAnalysis[Dataset[T]] =
     transformationWithAnalysis(_.dropDuplicates(colNames))
@@ -392,11 +479,14 @@ final case class Dataset[T](underlying: UnderlyingDataset[T]) { self =>
   @deprecated("use flatMap() or select() with functions.explode() instead", "2.0.0")
   def explode[A, B: TypeTag](inputColumn: String, outputColumn: String)(
       f: A => TraversableOnce[B]
-  ): TryAnalysis[DataFrame] = transformationWithAnalysis(_.explode[A, B](inputColumn, outputColumn)(f))
+  ): TryAnalysis[DataFrame] =
+    transformationWithAnalysis(_.explode[A, B](inputColumn, outputColumn)(f))
 
-  def filter(condition: Column): TryAnalysis[Dataset[T]] = transformationWithAnalysis(_.filter(condition))
+  def filter(condition: Column): TryAnalysis[Dataset[T]] =
+    transformationWithAnalysis(_.filter(condition))
 
-  def filter(conditionExpr: String): TryAnalysis[Dataset[T]] = transformationWithAnalysis(_.filter(conditionExpr))
+  def filter(conditionExpr: String): TryAnalysis[Dataset[T]] =
+    transformationWithAnalysis(_.filter(conditionExpr))
 
   def join(right: Dataset[_], usingColumn: String): TryAnalysis[DataFrame] =
     transformationWithAnalysis(_.join(right.underlying, usingColumn))
@@ -431,7 +521,8 @@ final case class Dataset[T](underlying: UnderlyingDataset[T]) { self =>
   def orderBy(sortCol: String, sortCols: String*): TryAnalysis[Dataset[T]] =
     transformationWithAnalysis(_.orderBy(sortCol, sortCols: _*))
 
-  def orderBy(sortExprs: Column*): TryAnalysis[Dataset[T]] = transformationWithAnalysis(_.orderBy(sortExprs: _*))
+  def orderBy(sortExprs: Column*): TryAnalysis[Dataset[T]] =
+    transformationWithAnalysis(_.orderBy(sortExprs: _*))
 
   def repartition(numPartitions: Int, partitionExprs: Column*): TryAnalysis[Dataset[T]] =
     transformationWithAnalysis(_.repartition(numPartitions, partitionExprs: _*))
@@ -445,16 +536,20 @@ final case class Dataset[T](underlying: UnderlyingDataset[T]) { self =>
   def repartitionByRange(partitionExprs: Column*): TryAnalysis[Dataset[T]] =
     transformationWithAnalysis(_.repartitionByRange(partitionExprs: _*))
 
-  def select(cols: Column*): TryAnalysis[DataFrame] = transformationWithAnalysis(_.select(cols: _*))
+  def select(cols: Column*): TryAnalysis[DataFrame] =
+    transformationWithAnalysis(_.select(cols: _*))
 
-  def select(col: String, cols: String*): TryAnalysis[DataFrame] = transformationWithAnalysis(_.select(col, cols: _*))
+  def select(col: String, cols: String*): TryAnalysis[DataFrame] =
+    transformationWithAnalysis(_.select(col, cols: _*))
 
-  def selectExpr(exprs: String*): TryAnalysis[DataFrame] = transformationWithAnalysis(_.selectExpr(exprs: _*))
+  def selectExpr(exprs: String*): TryAnalysis[DataFrame] =
+    transformationWithAnalysis(_.selectExpr(exprs: _*))
 
   def sort(sortCol: String, sortCols: String*): TryAnalysis[Dataset[T]] =
     transformationWithAnalysis(_.sort(sortCol, sortCols: _*))
 
-  def sort(sortExprs: Column*): TryAnalysis[Dataset[T]] = transformationWithAnalysis(_.sort(sortExprs: _*))
+  def sort(sortExprs: Column*): TryAnalysis[Dataset[T]] =
+    transformationWithAnalysis(_.sort(sortExprs: _*))
 
   def sortWithinPartitions(sortCol: String, sortCols: String*): TryAnalysis[Dataset[T]] =
     transformationWithAnalysis(_.sortWithinPartitions(sortCol, sortCols: _*))
@@ -462,14 +557,17 @@ final case class Dataset[T](underlying: UnderlyingDataset[T]) { self =>
   def sortWithinPartitions(sortExprs: Column*): TryAnalysis[Dataset[T]] =
     transformationWithAnalysis(_.sortWithinPartitions(sortExprs: _*))
 
-  def toDF(colNames: String*): TryAnalysis[DataFrame] = transformationWithAnalysis(_.toDF(colNames: _*))
+  def toDF(colNames: String*): TryAnalysis[DataFrame] =
+    transformationWithAnalysis(_.toDF(colNames: _*))
 
   def unionByName(other: Dataset[T], allowMissingColumns: Boolean): TryAnalysis[Dataset[T]] =
     transformationWithAnalysis(_.unionByName(other.underlying, allowMissingColumns))
 
-  def where(condition: Column): TryAnalysis[Dataset[T]] = transformationWithAnalysis(_.where(condition))
+  def where(condition: Column): TryAnalysis[Dataset[T]] =
+    transformationWithAnalysis(_.where(condition))
 
-  def where(conditionExpr: String): TryAnalysis[Dataset[T]] = transformationWithAnalysis(_.where(conditionExpr))
+  def where(conditionExpr: String): TryAnalysis[Dataset[T]] =
+    transformationWithAnalysis(_.where(conditionExpr))
 
   def withColumn(colName: String, col: Column): TryAnalysis[DataFrame] =
     transformationWithAnalysis(_.withColumn(colName, col))
@@ -522,5 +620,6 @@ final case class Dataset[T](underlying: UnderlyingDataset[T]) { self =>
 
   // ===============
 
-  def metadataColumn(colName: String): Column = get(_.metadataColumn(colName))
+  def metadataColumn(colName: String): Column =
+    get(_.metadataColumn(colName))
 }
