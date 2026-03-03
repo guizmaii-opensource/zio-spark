@@ -35,7 +35,10 @@ case object RDDTemplate extends Template.Default {
     }
 
   override def annotations(scalaVersion: ScalaBinaryVersion): Option[String] =
-    Some("@SuppressWarnings(Array(\"scalafix:DisableSyntax.defaultArgs\", \"scalafix:DisableSyntax.null\"))")
+    Some(
+      """@nowarn("cat=deprecation")
+        |@SuppressWarnings(Array("scalafix:DisableSyntax.defaultArgs", "scalafix:DisableSyntax.null"))""".stripMargin
+    )
 
   override def helpers: Helper = action && transformation && get
 }

@@ -21,6 +21,7 @@ import scala.collection.Map
 import scala.io.Codec
 import scala.reflect._
 
+@nowarn("cat=deprecation")
 @SuppressWarnings(Array("scalafix:DisableSyntax.defaultArgs", "scalafix:DisableSyntax.null"))
 final case class RDD[T](underlying: UnderlyingRDD[T]) { self =>
   // scalafix:off
