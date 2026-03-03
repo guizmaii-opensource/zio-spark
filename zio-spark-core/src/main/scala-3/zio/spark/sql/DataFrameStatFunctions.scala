@@ -17,7 +17,8 @@ import org.apache.spark.util.sketch.{BloomFilter, CountMinSketch}
 final case class DataFrameStatFunctions(underlying: UnderlyingDataFrameStatFunctions) { self =>
 
   /** Unpack the underlying DataFrameStatFunctions into a DataFrame. */
-  def unpack[U](f: UnderlyingDataFrameStatFunctions => UnderlyingDataset[U]): Dataset[U] = Dataset(f(underlying))
+  def unpack[U](f: UnderlyingDataFrameStatFunctions => UnderlyingDataset[U]): Dataset[U] =
+    Dataset(f(underlying))
 
   /**
    * Unpack the underlying DataFrameStatFunctions into a DataFrame, it
@@ -38,7 +39,8 @@ final case class DataFrameStatFunctions(underlying: UnderlyingDataFrameStatFunct
    */
   def transformationWithAnalysis(
       f: UnderlyingDataFrameStatFunctions => UnderlyingDataFrameStatFunctions
-  ): TryAnalysis[DataFrameStatFunctions] = TryAnalysis(transformation(f))
+  ): TryAnalysis[DataFrameStatFunctions] =
+    TryAnalysis(transformation(f))
 
   /** Applies an action to the underlying DataFrameStatFunctions. */
   def get[U](f: UnderlyingDataFrameStatFunctions => U): U = f(underlying)
@@ -47,7 +49,8 @@ final case class DataFrameStatFunctions(underlying: UnderlyingDataFrameStatFunct
    * Applies an action to the underlying DataFrameStatFunctions, it is
    * used for transformations that can fail due to an AnalysisException.
    */
-  def getWithAnalysis[U](f: UnderlyingDataFrameStatFunctions => U): TryAnalysis[U] = TryAnalysis(f(underlying))
+  def getWithAnalysis[U](f: UnderlyingDataFrameStatFunctions => U): TryAnalysis[U] =
+    TryAnalysis(f(underlying))
 
   // Generated functions coming from spark
 
@@ -66,7 +69,8 @@ final case class DataFrameStatFunctions(underlying: UnderlyingDataFrameStatFunct
   def corr(col1: String, col2: String, method: String): TryAnalysis[Double] =
     getWithAnalysis(_.corr(col1, col2, method))
 
-  def corr(col1: String, col2: String): TryAnalysis[Double] = getWithAnalysis(_.corr(col1, col2))
+  def corr(col1: String, col2: String): TryAnalysis[Double] =
+    getWithAnalysis(_.corr(col1, col2))
 
   def countMinSketch(colName: String, depth: Int, width: Int, seed: Int): TryAnalysis[CountMinSketch] =
     getWithAnalysis(_.countMinSketch(colName, depth, width, seed))
@@ -80,16 +84,19 @@ final case class DataFrameStatFunctions(underlying: UnderlyingDataFrameStatFunct
   def countMinSketch(col: Column, eps: Double, confidence: Double, seed: Int): TryAnalysis[CountMinSketch] =
     getWithAnalysis(_.countMinSketch(col, eps, confidence, seed))
 
-  def cov(col1: String, col2: String): TryAnalysis[Double] = getWithAnalysis(_.cov(col1, col2))
+  def cov(col1: String, col2: String): TryAnalysis[Double] =
+    getWithAnalysis(_.cov(col1, col2))
 
   // ===============
 
-  def crosstab(col1: String, col2: String): TryAnalysis[DataFrame] = unpackWithAnalysis(_.crosstab(col1, col2))
+  def crosstab(col1: String, col2: String): TryAnalysis[DataFrame] =
+    unpackWithAnalysis(_.crosstab(col1, col2))
 
   def freqItems(cols: Seq[String], support: Double): TryAnalysis[DataFrame] =
     unpackWithAnalysis(_.freqItems(cols, support))
 
-  def freqItems(cols: Seq[String]): TryAnalysis[DataFrame] = unpackWithAnalysis(_.freqItems(cols))
+  def freqItems(cols: Seq[String]): TryAnalysis[DataFrame] =
+    unpackWithAnalysis(_.freqItems(cols))
 
   def sampleBy[T](col: String, fractions: Map[T, Double], seed: Long): TryAnalysis[DataFrame] =
     unpackWithAnalysis(_.sampleBy[T](col, fractions, seed))

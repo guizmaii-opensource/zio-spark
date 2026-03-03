@@ -22,7 +22,8 @@ import scala.annotation.nowarn
 final case class KeyValueGroupedDataset[K, V](underlying: UnderlyingKeyValueGroupedDataset[K, V]) { self =>
 
   /** Unpack the underlying KeyValueGroupedDataset into a DataFrame. */
-  def unpack[U](f: UnderlyingKeyValueGroupedDataset[K, V] => UnderlyingDataset[U]): Dataset[U] = Dataset(f(underlying))
+  def unpack[U](f: UnderlyingKeyValueGroupedDataset[K, V] => UnderlyingDataset[U]): Dataset[U] =
+    Dataset(f(underlying))
 
   /**
    * Unpack the underlying KeyValueGroupedDataset into a DataFrame, it
@@ -31,32 +32,40 @@ final case class KeyValueGroupedDataset[K, V](underlying: UnderlyingKeyValueGrou
    */
   def unpackWithAnalysis[U](
       f: UnderlyingKeyValueGroupedDataset[K, V] => UnderlyingDataset[U]
-  ): TryAnalysis[Dataset[U]] = TryAnalysis(unpack(f))
+  ): TryAnalysis[Dataset[U]] =
+    TryAnalysis(unpack(f))
 
   /** Applies a transformation to the underlying KeyValueGroupedDataset. */
   def transformation[KNew, VNew](
       f: UnderlyingKeyValueGroupedDataset[K, V] => UnderlyingKeyValueGroupedDataset[KNew, VNew]
-  ): KeyValueGroupedDataset[KNew, VNew] = KeyValueGroupedDataset(f(underlying))
+  ): KeyValueGroupedDataset[KNew, VNew] =
+    KeyValueGroupedDataset(f(underlying))
 
   // Generated functions coming from spark
 
-  def keyAs[L: Encoder]: KeyValueGroupedDataset[L, V] = transformation(_.keyAs[L])
+  def keyAs[L: Encoder]: KeyValueGroupedDataset[L, V] =
+    transformation(_.keyAs[L])
 
-  def mapValues[W: Encoder](func: V => W): KeyValueGroupedDataset[K, W] = transformation(_.mapValues[W](func))
+  def mapValues[W: Encoder](func: V => W): KeyValueGroupedDataset[K, W] =
+    transformation(_.mapValues[W](func))
 
   // ===============
 
-  def cogroup[U, R: Encoder](other: KeyValueGroupedDataset[K, U])(
-      f: (K, Iterator[V], Iterator[U]) => TraversableOnce[R]
-  ): Dataset[R] = unpack(_.cogroup[U, R](other.underlying)(f))
+  def cogroup[U, R: Encoder](
+      other: KeyValueGroupedDataset[K, U]
+  )(f: (K, Iterator[V], Iterator[U]) => TraversableOnce[R]): Dataset[R] =
+    unpack(_.cogroup[U, R](other.underlying)(f))
 
-  def count: Dataset[(K, Long)] = unpack(_.count())
+  def count: Dataset[(K, Long)] =
+    unpack(_.count())
 
-  def flatMapGroups[U: Encoder](f: (K, Iterator[V]) => TraversableOnce[U]): Dataset[U] = unpack(_.flatMapGroups[U](f))
+  def flatMapGroups[U: Encoder](f: (K, Iterator[V]) => TraversableOnce[U]): Dataset[U] =
+    unpack(_.flatMapGroups[U](f))
 
   def flatMapGroupsWithState[S: Encoder, U: Encoder](outputMode: OutputMode, timeoutConf: GroupStateTimeout)(
       func: (K, Iterator[V], GroupState[S]) => Iterator[U]
-  ): Dataset[U] = unpack(_.flatMapGroupsWithState[S, U](outputMode, timeoutConf)(func))
+  ): Dataset[U] =
+    unpack(_.flatMapGroupsWithState[S, U](outputMode, timeoutConf)(func))
 
   def flatMapGroupsWithState[S: Encoder, U: Encoder](
       outputMode: OutputMode,
@@ -65,16 +74,19 @@ final case class KeyValueGroupedDataset[K, V](underlying: UnderlyingKeyValueGrou
   )(func: (K, Iterator[V], GroupState[S]) => Iterator[U]): Dataset[U] =
     unpack(_.flatMapGroupsWithState[S, U](outputMode, timeoutConf, initialState.underlying)(func))
 
-  def keys: Dataset[K] = unpack(_.keys)
+  def keys: Dataset[K] =
+    unpack(_.keys)
 
-  def mapGroups[U: Encoder](f: (K, Iterator[V]) => U): Dataset[U] = unpack(_.mapGroups[U](f))
+  def mapGroups[U: Encoder](f: (K, Iterator[V]) => U): Dataset[U] =
+    unpack(_.mapGroups[U](f))
 
   def mapGroupsWithState[S: Encoder, U: Encoder](func: (K, Iterator[V], GroupState[S]) => U): Dataset[U] =
     unpack(_.mapGroupsWithState[S, U](func))
 
-  def mapGroupsWithState[S: Encoder, U: Encoder](timeoutConf: GroupStateTimeout)(
-      func: (K, Iterator[V], GroupState[S]) => U
-  ): Dataset[U] = unpack(_.mapGroupsWithState[S, U](timeoutConf)(func))
+  def mapGroupsWithState[S: Encoder, U: Encoder](
+      timeoutConf: GroupStateTimeout
+  )(func: (K, Iterator[V], GroupState[S]) => U): Dataset[U] =
+    unpack(_.mapGroupsWithState[S, U](timeoutConf)(func))
 
   def mapGroupsWithState[S: Encoder, U: Encoder](
       timeoutConf: GroupStateTimeout,
@@ -82,11 +94,13 @@ final case class KeyValueGroupedDataset[K, V](underlying: UnderlyingKeyValueGrou
   )(func: (K, Iterator[V], GroupState[S]) => U): Dataset[U] =
     unpack(_.mapGroupsWithState[S, U](timeoutConf, initialState.underlying)(func))
 
-  def reduceGroups(f: (V, V) => V): Dataset[(K, V)] = unpack(_.reduceGroups(f))
+  def reduceGroups(f: (V, V) => V): Dataset[(K, V)] =
+    unpack(_.reduceGroups(f))
 
   // ===============
 
-  def agg[U1](col1: TypedColumn[V, U1]): TryAnalysis[Dataset[(K, U1)]] = unpackWithAnalysis(_.agg[U1](col1))
+  def agg[U1](col1: TypedColumn[V, U1]): TryAnalysis[Dataset[(K, U1)]] =
+    unpackWithAnalysis(_.agg[U1](col1))
 
   def agg[U1, U2](col1: TypedColumn[V, U1], col2: TypedColumn[V, U2]): TryAnalysis[Dataset[(K, U1, U2)]] =
     unpackWithAnalysis(_.agg[U1, U2](col1, col2))
@@ -95,14 +109,16 @@ final case class KeyValueGroupedDataset[K, V](underlying: UnderlyingKeyValueGrou
       col1: TypedColumn[V, U1],
       col2: TypedColumn[V, U2],
       col3: TypedColumn[V, U3]
-  ): TryAnalysis[Dataset[(K, U1, U2, U3)]] = unpackWithAnalysis(_.agg[U1, U2, U3](col1, col2, col3))
+  ): TryAnalysis[Dataset[(K, U1, U2, U3)]] =
+    unpackWithAnalysis(_.agg[U1, U2, U3](col1, col2, col3))
 
   def agg[U1, U2, U3, U4](
       col1: TypedColumn[V, U1],
       col2: TypedColumn[V, U2],
       col3: TypedColumn[V, U3],
       col4: TypedColumn[V, U4]
-  ): TryAnalysis[Dataset[(K, U1, U2, U3, U4)]] = unpackWithAnalysis(_.agg[U1, U2, U3, U4](col1, col2, col3, col4))
+  ): TryAnalysis[Dataset[(K, U1, U2, U3, U4)]] =
+    unpackWithAnalysis(_.agg[U1, U2, U3, U4](col1, col2, col3, col4))
 
   def agg[U1, U2, U3, U4, U5](
       col1: TypedColumn[V, U1],
@@ -151,9 +167,10 @@ final case class KeyValueGroupedDataset[K, V](underlying: UnderlyingKeyValueGrou
   )(otherSortExprs: Column*)(f: (K, Iterator[V], Iterator[U]) => TraversableOnce[R]): TryAnalysis[Dataset[R]] =
     unpackWithAnalysis(_.cogroupSorted[U, R](other.underlying)(thisSortExprs: _*)(otherSortExprs: _*)(f))
 
-  def flatMapSortedGroups[U: Encoder](sortExprs: Column*)(
-      f: (K, Iterator[V]) => TraversableOnce[U]
-  ): TryAnalysis[Dataset[U]] = unpackWithAnalysis(_.flatMapSortedGroups[U](sortExprs: _*)(f))
+  def flatMapSortedGroups[U: Encoder](
+      sortExprs: Column*
+  )(f: (K, Iterator[V]) => TraversableOnce[U]): TryAnalysis[Dataset[U]] =
+    unpackWithAnalysis(_.flatMapSortedGroups[U](sortExprs: _*)(f))
 
   // ===============
 
