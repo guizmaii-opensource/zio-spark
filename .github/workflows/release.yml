@@ -24,10 +24,25 @@ jobs:
           java-version: '17'
           check-latest: true
 
-      - name: Publish package
-        run: sbt 'clean;+Test/compile;ci-release'
+      - name: Publish signed artifacts
+        run: sbt '+publishSigned'
         env:
           PGP_PASSPHRASE: ${{ secrets.PGP_PASSPHRASE }}
           PGP_SECRET: ${{ secrets.PGP_SECRET }}
+          SONATYPE_PASSWORD: ${{ secrets.SONATYPE_PASSWORD }}
+          SONATYPE_USERNAME: ${{ secrets.SONATYPE_USERNAME }}
+
+      # The ZioSparkCodegenPlugin source generator regenerates tracked files
+      # during compilation, making the git tree dirty. After cross-build (+)
+      # resets, sbt reapplies settings and sbt-dynver re-evaluates the version,
+      # producing a SNAPSHOT version that the Central Portal rejects.
+      # Cleaning the tree between steps ensures sonatypeBundleRelease sees
+      # the correct tag-based version.
+      - name: Reset git state for sbt-dynver
+        run: git checkout -- . && git clean -fd
+
+      - name: Release to Sonatype Central
+        run: sbt 'sonatypeBundleRelease'
+        env:
           SONATYPE_PASSWORD: ${{ secrets.SONATYPE_PASSWORD }}
           SONATYPE_USERNAME: ${{ secrets.SONATYPE_USERNAME }}
