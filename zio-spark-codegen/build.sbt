@@ -2,6 +2,7 @@ ThisBuild / organization := "com.guizmaii"
 
 // Spark still uses 1.X.X version of scala-xml
 ThisBuild / libraryDependencySchemes += "org.scala-lang.modules" %% "scala-xml" % VersionScheme.Always
+ThisBuild / libraryDependencySchemes += "com.github.luben"        % "zstd-jni"  % VersionScheme.Always
 
 // Aliases
 addCommandAlias("fmt", "scalafmt")

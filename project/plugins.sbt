@@ -1,5 +1,6 @@
 ThisBuild / libraryDependencySchemes += "org.scala-lang.modules" %% "scala-xml"                % VersionScheme.Always
 ThisBuild / libraryDependencySchemes += "org.scala-lang.modules" %% "scala-parser-combinators" % VersionScheme.Always
+ThisBuild / libraryDependencySchemes += "com.github.luben"        % "zstd-jni"                 % VersionScheme.Always
 
 addSbtPlugin("ch.epfl.scala"                     % "sbt-scalafix"     % "0.14.6")
 addSbtPlugin("com.github.sbt"                    % "sbt-ci-release"   % "1.11.2")
