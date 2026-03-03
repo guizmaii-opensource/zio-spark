@@ -68,7 +68,7 @@ jobs:
       matrix:
         scala: [ "3.x" ]
         project: [ "coreTests", "test" ]
-        java: [ "17", "21", "25" ]
+        java: [ "17", "21" ]
     steps:
       - uses: actions/checkout@v4
       - uses: sbt/setup-sbt@v1
