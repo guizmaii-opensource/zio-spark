@@ -5,7 +5,7 @@ import org.apache.spark.SparkFirehoseListener
 import org.apache.spark.scheduler.{SparkListenerEvent, SparkListenerJobEnd, SparkListenerJobStart}
 import scala3encoders.given
 
-import zio.{durationInt, durationLong, Chunk, Ref, UIO, Unsafe, ZIO}
+import zio.{durationInt, durationLong, Chunk, Ref, Scope, UIO, Unsafe, ZIO}
 import zio.spark.sql.{fromSpark, SIO, SparkSession}
 import zio.spark.sql.implicits._
 import zio.spark.test._
@@ -43,7 +43,7 @@ object CancellableEffectSpec extends ZIOSparkSpecDefault {
 
   // This test seems to be flaky and make the whole specs failed.
   // See: https://github.com/univalence/zio-spark/issues/304.
-  def spec =
+  def spec: Spec[Environment & (TestEnvironment & Scope), Any] =
     suite("Test cancellable spark jobs")(
       test("Cancellable jobs should have a specific group Id") {
         CancellableEffect.makeItCancellable(getJobGroup).map(x => assertTrue(x.startsWith("cancellable-group")))
