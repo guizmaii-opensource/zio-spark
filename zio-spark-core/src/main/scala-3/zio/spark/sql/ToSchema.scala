@@ -39,7 +39,8 @@ object ToSchema extends AutoDerivation[ToSchema] {
       }
     }
 
-  given [T <: Any & Product](using T: ToSchema[T]): ToStructSchema[T] = T.asInstanceOf[ToStructSchema[T]] // scalafix:ok DisableSyntax.asInstanceOf
+  given [T <: Any & Product](using T: ToSchema[T]): ToStructSchema[T] =
+    T.asInstanceOf[ToStructSchema[T]] // scalafix:ok DisableSyntax.asInstanceOf
 
   // We should not split a ToStructSchema.
   override def split[T](ctx: SealedTrait[ToSchema, T]): ToSchema[T] = ???
