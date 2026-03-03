@@ -11,6 +11,8 @@ import org.apache.spark.sql.streaming.{
 import zio.{Duration, Task, ZIO}
 import zio.spark.sql.Dataset
 
+import scala.annotation.nowarn
+
 import java.util.concurrent.TimeoutException
 
 final case class DataStreamWriter[T] private (
@@ -125,6 +127,7 @@ final case class DataStreamWriter[T] private (
     trigger(Trigger.Continuous(duration.toMillis))
 
   /** A ZIO-Spark specific function to run the streaming job only once. */
+  @nowarn("cat=deprecation")
   def once: DataStreamWriter[T] = trigger(Trigger.Once())
 
   /**

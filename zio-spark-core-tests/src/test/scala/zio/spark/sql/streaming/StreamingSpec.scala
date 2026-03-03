@@ -5,7 +5,6 @@ import scala3encoders.given
 import zio.spark.helper.Fixture.{resourcesPath, Person}
 import zio.spark.parameter.append
 import zio.spark.sql._
-import zio.spark.sql.implicits._
 import zio.spark.test._
 import zio.test._
 

@@ -16,6 +16,9 @@ import org.apache.spark.sql.{
 }
 import org.apache.spark.sql.streaming.{GroupState, GroupStateTimeout, OutputMode}
 
+import scala.annotation.nowarn
+
+@nowarn("cat=deprecation")
 final case class KeyValueGroupedDataset[K, V](underlying: UnderlyingKeyValueGroupedDataset[K, V]) { self =>
 
   /** Unpack the underlying KeyValueGroupedDataset into a DataFrame. */

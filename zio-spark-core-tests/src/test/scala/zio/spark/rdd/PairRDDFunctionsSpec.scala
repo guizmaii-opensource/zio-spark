@@ -4,7 +4,6 @@ import scala3encoders.given
 
 import zio.spark.helper.Fixture.readLorem
 import zio.spark.sql._
-import zio.spark.sql.implicits._
 import zio.spark.test._
 import zio.test._
 

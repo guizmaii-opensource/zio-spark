@@ -33,6 +33,7 @@ case object DatasetTemplate extends Template.Default {
         |import zio._
         |import zio.spark.rdd._
         |
+        |import scala.annotation.nowarn
         |import scala.reflect.runtime.universe.TypeTag
         |
         |import java.io.IOException
@@ -57,6 +58,8 @@ case object DatasetTemplate extends Template.Default {
          |private implicit def liftKeyValueGroupedDataset[K, V](x: UnderlyingKeyValueGroupedDataset[K, V]): KeyValueGroupedDataset[K, V] =
          |  KeyValueGroupedDataset(x)""".stripMargin
     }
+
+  override def annotations(scalaVersion: ScalaBinaryVersion): Option[String] = Some("""@nowarn("cat=deprecation")""")
 
   override def helpers: Helper = action && transformations && gets
 

@@ -15,25 +15,30 @@ case object RDDTemplate extends Template.Default {
         |import org.apache.spark.{Dependency, Partition, Partitioner, TaskContext}
         |import org.apache.spark.partial.{BoundedDouble, PartialResult}
         |import org.apache.spark.rdd.{PartitionCoalescer, RDD => UnderlyingRDD, RDDBarrier}
+        |import org.apache.spark.resource.ResourceProfile
         |import org.apache.spark.storage.StorageLevel
         |
         |import zio._
         |
+        |import scala.annotation.nowarn
         |import scala.collection.Map
         |import scala.io.Codec
-        |import scala.reflect._
-        |import org.apache.spark.resource.ResourceProfile""".stripMargin
+        |import scala.reflect._""".stripMargin
     }
 
   override def implicits(scalaVersion: ScalaBinaryVersion): Option[String] =
     Some {
       s"""private implicit def lift[U](x:Underlying$name[U]):$name[U] = $name(x)
+         |@nowarn("msg=unused private member")
          |private implicit def arrayToSeq2[U](x: Underlying$name[Array[U]]): Underlying$name[Seq[U]] = x.map(_.toIndexedSeq)
          |@inline private def noOrdering[U]: Ordering[U] = null""".stripMargin
     }
 
   override def annotations(scalaVersion: ScalaBinaryVersion): Option[String] =
-    Some("@SuppressWarnings(Array(\"scalafix:DisableSyntax.defaultArgs\", \"scalafix:DisableSyntax.null\"))")
+    Some(
+      """@nowarn("cat=deprecation")
+        |@SuppressWarnings(Array("scalafix:DisableSyntax.defaultArgs", "scalafix:DisableSyntax.null"))""".stripMargin
+    )
 
   override def helpers: Helper = action && transformation && get
 }

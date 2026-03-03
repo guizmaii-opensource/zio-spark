@@ -16,14 +16,17 @@ import org.apache.spark.storage.StorageLevel
 
 import zio._
 
+import scala.annotation.nowarn
 import scala.collection.Map
 import scala.io.Codec
 import scala.reflect._
 
+@nowarn("cat=deprecation")
 @SuppressWarnings(Array("scalafix:DisableSyntax.defaultArgs", "scalafix:DisableSyntax.null"))
 final case class RDD[T](underlying: UnderlyingRDD[T]) { self =>
   // scalafix:off
-  implicit private def lift[U](x: UnderlyingRDD[U]): RDD[U]                              = RDD(x)
+  implicit private def lift[U](x: UnderlyingRDD[U]): RDD[U] = RDD(x)
+  @nowarn("msg=unused private member")
   implicit private def arrayToSeq2[U](x: UnderlyingRDD[Array[U]]): UnderlyingRDD[Seq[U]] = x.map(_.toIndexedSeq)
   @inline private def noOrdering[U]: Ordering[U]                                         = null
   // scalafix:on
