@@ -1,10 +1,11 @@
 package zio.spark.sql.streaming
 
-import scala3encoders.given
+import scala3encoders.given // scalafix:ok RemoveUnused
 
 import zio.Scope
 import zio.durationInt
 import zio.spark.sql._
+import zio.spark.sql.implicits._ // scalafix:ok RemoveUnused
 import zio.spark.test._
 import zio.test._
 import zio.test.Assertion.{containsString, equalTo}

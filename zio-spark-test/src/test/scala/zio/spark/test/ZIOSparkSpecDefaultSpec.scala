@@ -1,9 +1,9 @@
 package zio.spark.test
 
-import scala3encoders.given // scalafix:ok
+import scala3encoders.given // scalafix:ok RemoveUnused
 
 import zio.spark.sql.SparkSession
-import zio.spark.sql.implicits._
+import zio.spark.sql.implicits._ // scalafix:ok RemoveUnused
 import zio.test._
 
 object ZIOSparkSpecDefaultSpec extends ZIOSparkSpecDefault {
