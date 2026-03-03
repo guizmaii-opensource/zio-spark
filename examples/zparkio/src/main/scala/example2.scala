@@ -11,6 +11,7 @@ import example.example2.services.{Database, FileIO, SparkBuilder}
 import example.example2.services.Database.{Credentials, Database}
 import example.example2.services.FileIO.FileIO
 import org.apache.spark.sql.Encoder
+import scala3encoders.given
 
 import zio.{RIO, Task, ZIO, ZLayer}
 import zio.spark.sql.{Dataset, SIO, SparkSession}
@@ -67,7 +68,6 @@ package services {
     }
 
     trait LiveService extends FileIO.Service {
-      @SuppressWarnings(Array("scalafix:Disable.close", "scalafix:Disable.fromFile"))
       override protected def readFileContent(path: String): Task[Seq[String]] =
         ZIO.attempt {
           val file    = Source.fromFile(path)

@@ -1,6 +1,6 @@
 package zio.spark.rdd
 
-import scala3encoders.given // scalafix:ok
+import scala3encoders.given
 
 import zio.spark.helper.Fixture.readLorem
 import zio.spark.sql._

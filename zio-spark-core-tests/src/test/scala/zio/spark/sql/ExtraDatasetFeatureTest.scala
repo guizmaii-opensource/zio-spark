@@ -9,7 +9,7 @@ import zio.test._
 import zio.test.TestAspect._
 
 object ExtraDatasetFeatureTest extends ZIOSparkSpecDefault {
-  import scala3encoders.given // scalafix:ok
+  import scala3encoders.given
 
   import zio.spark.sql.TryAnalysis.syntax.throwAnalysisException
   import zio.spark.sql.implicits._
