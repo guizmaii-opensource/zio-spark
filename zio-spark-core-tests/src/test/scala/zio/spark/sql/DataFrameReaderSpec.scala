@@ -1,7 +1,7 @@
 package zio.spark.sql
 
 import org.apache.spark.sql.types._
-import scala3encoders.given // scalafix:ok
+import scala3encoders.given
 
 import zio.spark.helper.Fixture._
 import zio.spark.sql.DataFrameReader.WithoutSchema

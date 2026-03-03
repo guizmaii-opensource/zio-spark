@@ -1,6 +1,6 @@
 package zio.spark.test
 
-import scala3encoders.given // scalafix:ok
+import scala3encoders.given
 
 import zio.spark.sql.SparkSession
 import zio.spark.sql.implicits._
