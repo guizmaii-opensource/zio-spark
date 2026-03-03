@@ -39,8 +39,8 @@ object DataFrameWriterSpec extends ZIOSparkSpecDefault {
         for {
           df <- read
           writer = df.write.partitionBy(partitionCol)
-          _     <- writer.csv(path)
-          files <- ZIO.attempt(Files.walk(Paths.get(path)))
+          _             <- writer.csv(path)
+          files         <- ZIO.attempt(Files.walk(Paths.get(path)))
           isPartitioned <-
             ZStream
               .fromJavaStream(files)
