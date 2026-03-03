@@ -3,7 +3,6 @@ package zio.spark.helper
 import zio.spark.rdd._
 import zio.spark.sql._
 import zio.spark.sql.TryAnalysis.syntax.throwAnalysisException
-import zio.spark.sql.implicits._
 
 import java.nio.file.Paths
 
