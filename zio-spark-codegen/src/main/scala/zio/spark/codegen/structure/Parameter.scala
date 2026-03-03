@@ -9,11 +9,13 @@ case class Parameter(underlying: Term.Param, scalaVersion: ScalaBinaryVersion) {
 
   val name: String = underlying.name.toString
 
-  val signature: String =
+  val rawSignature: String =
     scalaVersion match {
       case ScalaBinaryVersion.V2_13 => underlying.decltpe.get.toString.replace("TraversableOnce", "IterableOnce")
       case _                        => underlying.decltpe.get.toString
     }
+
+  val signature: String = Helpers.cleanPrefixPackage(rawSignature)
 
   val maybeDefault: Option[String] = underlying.default.map(_.toString)
 

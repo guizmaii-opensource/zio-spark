@@ -1,7 +1,7 @@
 name         := "zio-ecosystem"
 scalaVersion := "3.3.7"
 
-val sparkVersion = "3.5.8"
+val sparkVersion = "4.1.1"
 
 libraryDependencies ++= Seq(
   // "io.univalence"    %% "zio-spark"  % "X.X.X", //https://index.scala-lang.org/univalence/zio-spark/zio-spark

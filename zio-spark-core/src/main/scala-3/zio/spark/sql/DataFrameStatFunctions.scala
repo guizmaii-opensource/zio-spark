@@ -12,7 +12,6 @@ import org.apache.spark.sql.{
   DataFrameStatFunctions => UnderlyingDataFrameStatFunctions,
   Dataset => UnderlyingDataset
 }
-import org.apache.spark.util.sketch.{BloomFilter, CountMinSketch}
 
 final case class DataFrameStatFunctions(underlying: UnderlyingDataFrameStatFunctions) { self =>
 
@@ -54,35 +53,11 @@ final case class DataFrameStatFunctions(underlying: UnderlyingDataFrameStatFunct
 
   // Generated functions coming from spark
 
-  def bloomFilter(colName: String, expectedNumItems: Long, fpp: Double): TryAnalysis[BloomFilter] =
-    getWithAnalysis(_.bloomFilter(colName, expectedNumItems, fpp))
-
-  def bloomFilter(col: Column, expectedNumItems: Long, fpp: Double): TryAnalysis[BloomFilter] =
-    getWithAnalysis(_.bloomFilter(col, expectedNumItems, fpp))
-
-  def bloomFilter(colName: String, expectedNumItems: Long, numBits: Long): TryAnalysis[BloomFilter] =
-    getWithAnalysis(_.bloomFilter(colName, expectedNumItems, numBits))
-
-  def bloomFilter(col: Column, expectedNumItems: Long, numBits: Long): TryAnalysis[BloomFilter] =
-    getWithAnalysis(_.bloomFilter(col, expectedNumItems, numBits))
-
   def corr(col1: String, col2: String, method: String): TryAnalysis[Double] =
     getWithAnalysis(_.corr(col1, col2, method))
 
   def corr(col1: String, col2: String): TryAnalysis[Double] =
     getWithAnalysis(_.corr(col1, col2))
-
-  def countMinSketch(colName: String, depth: Int, width: Int, seed: Int): TryAnalysis[CountMinSketch] =
-    getWithAnalysis(_.countMinSketch(colName, depth, width, seed))
-
-  def countMinSketch(colName: String, eps: Double, confidence: Double, seed: Int): TryAnalysis[CountMinSketch] =
-    getWithAnalysis(_.countMinSketch(colName, eps, confidence, seed))
-
-  def countMinSketch(col: Column, depth: Int, width: Int, seed: Int): TryAnalysis[CountMinSketch] =
-    getWithAnalysis(_.countMinSketch(col, depth, width, seed))
-
-  def countMinSketch(col: Column, eps: Double, confidence: Double, seed: Int): TryAnalysis[CountMinSketch] =
-    getWithAnalysis(_.countMinSketch(col, eps, confidence, seed))
 
   def cov(col1: String, col2: String): TryAnalysis[Double] =
     getWithAnalysis(_.cov(col1, col2))

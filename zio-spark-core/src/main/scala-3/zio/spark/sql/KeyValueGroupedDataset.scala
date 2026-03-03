@@ -53,13 +53,13 @@ final case class KeyValueGroupedDataset[K, V](underlying: UnderlyingKeyValueGrou
 
   def cogroup[U, R: Encoder](
       other: KeyValueGroupedDataset[K, U]
-  )(f: (K, Iterator[V], Iterator[U]) => TraversableOnce[R]): Dataset[R] =
+  )(f: (K, Iterator[V], Iterator[U]) => IterableOnce[R]): Dataset[R] =
     unpack(_.cogroup[U, R](other.underlying)(f))
 
   def count: Dataset[(K, Long)] =
     unpack(_.count())
 
-  def flatMapGroups[U: Encoder](f: (K, Iterator[V]) => TraversableOnce[U]): Dataset[U] =
+  def flatMapGroups[U: Encoder](f: (K, Iterator[V]) => IterableOnce[U]): Dataset[U] =
     unpack(_.flatMapGroups[U](f))
 
   def flatMapGroupsWithState[S: Encoder, U: Encoder](outputMode: OutputMode, timeoutConf: GroupStateTimeout)(
@@ -164,12 +164,12 @@ final case class KeyValueGroupedDataset[K, V](underlying: UnderlyingKeyValueGrou
 
   def cogroupSorted[U, R: Encoder](other: KeyValueGroupedDataset[K, U])(
       thisSortExprs: Column*
-  )(otherSortExprs: Column*)(f: (K, Iterator[V], Iterator[U]) => TraversableOnce[R]): TryAnalysis[Dataset[R]] =
+  )(otherSortExprs: Column*)(f: (K, Iterator[V], Iterator[U]) => IterableOnce[R]): TryAnalysis[Dataset[R]] =
     unpackWithAnalysis(_.cogroupSorted[U, R](other.underlying)(thisSortExprs: _*)(otherSortExprs: _*)(f))
 
   def flatMapSortedGroups[U: Encoder](
       sortExprs: Column*
-  )(f: (K, Iterator[V]) => TraversableOnce[U]): TryAnalysis[Dataset[U]] =
+  )(f: (K, Iterator[V]) => IterableOnce[U]): TryAnalysis[Dataset[U]] =
     unpackWithAnalysis(_.flatMapSortedGroups[U](sortExprs: _*)(f))
 
   // ===============

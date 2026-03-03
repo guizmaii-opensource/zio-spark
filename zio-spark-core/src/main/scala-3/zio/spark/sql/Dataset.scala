@@ -153,16 +153,7 @@ final case class Dataset[T](underlying: UnderlyingDataset[T]) { self =>
     get(_.groupByKey[K](func))
 
   // scalastyle:on println
-  /**
-   * Returns a [[DataFrameNaFunctions]] for working with missing data.
-   * {{{
-   *   // Dropping rows containing any null values.
-   *   ds.na.drop()
-   * }}}
-   *
-   * @group untypedrel
-   * @since 1.6.0
-   */
+  /** @inheritdoc */
   def na: DataFrameNaFunctions =
     get(_.na)
 
@@ -271,6 +262,9 @@ final case class Dataset[T](underlying: UnderlyingDataset[T]) { self =>
   def localCheckpoint(eager: => Boolean)(implicit trace: Trace): Task[Dataset[T]] =
     action(_.localCheckpoint(eager))
 
+  def localCheckpoint(eager: => Boolean, storageLevel: => StorageLevel)(implicit trace: Trace): Task[Dataset[T]] =
+    action(_.localCheckpoint(eager, storageLevel))
+
   def persist(implicit trace: Trace): Task[Dataset[T]] =
     action(_.persist())
 
@@ -313,17 +307,29 @@ final case class Dataset[T](underlying: UnderlyingDataset[T]) { self =>
   def distinct: Dataset[T] =
     transformation(_.distinct())
 
-  def drop(colName: String): DataFrame =
-    transformation(_.drop(colName))
-
   def drop(colNames: String*): DataFrame =
     transformation(_.drop(colNames: _*))
 
-  def drop(col: Column): DataFrame =
-    transformation(_.drop(col))
-
   def drop(col: Column, cols: Column*): DataFrame =
     transformation(_.drop(col, cols: _*))
+
+  // Return type overrides to make sure we return the implementation instead
+  // of the interface. This is done for a couple of reasons:
+  // - Retain the old signatures for binary compatibility;
+  // - Java compatibility . The java compiler uses the byte code signatures,
+  //   and those would point to api.Dataset being returned instead of Dataset.
+  //   This causes issues when the java code tries to materialize results, or
+  //   tries to use functionality that is implementation specfic.
+  // - Scala method resolution runs into problems when the ambiguous methods are
+  //   scattered across the interface and implementation. `drop` and `select`
+  //   suffered from this.
+  ////////////////////////////////////////////////////////////////////////////
+  /** @inheritdoc */
+  def drop(colName: String): DataFrame =
+    transformation(_.drop(colName))
+
+  def drop(col: Column): DataFrame =
+    transformation(_.drop(col))
 
   def dropDuplicates: Dataset[T] =
     transformation(_.dropDuplicates())
@@ -338,13 +344,13 @@ final case class Dataset[T](underlying: UnderlyingDataset[T]) { self =>
     transformation(_.exceptAll(other.underlying))
 
   @deprecated("use flatMap() or select() with functions.explode() instead", "2.0.0")
-  def explode[A <: Product: TypeTag](input: Column*)(f: Row => TraversableOnce[A]): DataFrame =
+  def explode[A <: Product: TypeTag](input: Column*)(f: Row => IterableOnce[A]): DataFrame =
     transformation(_.explode[A](input: _*)(f))
 
   def filter(func: T => Boolean): Dataset[T] =
     transformation(_.filter(func))
 
-  def flatMap[U: Encoder](func: T => TraversableOnce[U]): Dataset[U] =
+  def flatMap[U: Encoder](func: T => IterableOnce[U]): Dataset[U] =
     transformation(_.flatMap[U](func))
 
   def hint(name: String, parameters: Any*): Dataset[T] =
@@ -358,6 +364,12 @@ final case class Dataset[T](underlying: UnderlyingDataset[T]) { self =>
 
   def join(right: Dataset[_]): DataFrame =
     transformation(_.join(right.underlying))
+
+  def lateralJoin(right: Dataset[_]): DataFrame =
+    transformation(_.lateralJoin(right.underlying))
+
+  def lateralJoin(right: Dataset[_], joinType: String): DataFrame =
+    transformation(_.lateralJoin(right.underlying, joinType))
 
   def limit(n: Int): Dataset[T] =
     transformation(_.limit(n))
@@ -374,14 +386,14 @@ final case class Dataset[T](underlying: UnderlyingDataset[T]) { self =>
   def repartition(numPartitions: Int): Dataset[T] =
     transformation(_.repartition(numPartitions))
 
+  def sample(withReplacement: Boolean, fraction: Double, seed: Long): Dataset[T] =
+    transformation(_.sample(withReplacement, fraction, seed))
+
   def sample(fraction: Double, seed: Long): Dataset[T] =
     transformation(_.sample(fraction, seed))
 
   def sample(fraction: Double): Dataset[T] =
     transformation(_.sample(fraction))
-
-  def sample(withReplacement: Boolean, fraction: Double, seed: Long): Dataset[T] =
-    transformation(_.sample(withReplacement, fraction, seed))
 
   def sample(withReplacement: Boolean, fraction: Double): Dataset[T] =
     transformation(_.sample(withReplacement, fraction))
@@ -429,6 +441,9 @@ final case class Dataset[T](underlying: UnderlyingDataset[T]) { self =>
 
   def toJSON: Dataset[String] =
     transformation(_.toJSON)
+
+  def transpose: DataFrame =
+    transformation(_.transpose())
 
   def union(other: Dataset[T]): Dataset[T] =
     transformation(_.union(other.underlying))
@@ -478,7 +493,7 @@ final case class Dataset[T](underlying: UnderlyingDataset[T]) { self =>
 
   @deprecated("use flatMap() or select() with functions.explode() instead", "2.0.0")
   def explode[A, B: TypeTag](inputColumn: String, outputColumn: String)(
-      f: A => TraversableOnce[B]
+      f: A => IterableOnce[B]
   ): TryAnalysis[DataFrame] =
     transformationWithAnalysis(_.explode[A, B](inputColumn, outputColumn)(f))
 
@@ -487,6 +502,12 @@ final case class Dataset[T](underlying: UnderlyingDataset[T]) { self =>
 
   def filter(conditionExpr: String): TryAnalysis[Dataset[T]] =
     transformationWithAnalysis(_.filter(conditionExpr))
+
+  def join(right: Dataset[_], usingColumns: Seq[String], joinType: String): TryAnalysis[DataFrame] =
+    transformationWithAnalysis(_.join(right.underlying, usingColumns, joinType))
+
+  def join(right: Dataset[_], joinExprs: Column, joinType: String): TryAnalysis[DataFrame] =
+    transformationWithAnalysis(_.join(right.underlying, joinExprs, joinType))
 
   def join(right: Dataset[_], usingColumn: String): TryAnalysis[DataFrame] =
     transformationWithAnalysis(_.join(right.underlying, usingColumn))
@@ -497,20 +518,20 @@ final case class Dataset[T](underlying: UnderlyingDataset[T]) { self =>
   def join(right: Dataset[_], usingColumn: String, joinType: String): TryAnalysis[DataFrame] =
     transformationWithAnalysis(_.join(right.underlying, usingColumn, joinType))
 
-  def join(right: Dataset[_], usingColumns: Seq[String], joinType: String): TryAnalysis[DataFrame] =
-    transformationWithAnalysis(_.join(right.underlying, usingColumns, joinType))
-
   def join(right: Dataset[_], joinExprs: Column): TryAnalysis[DataFrame] =
     transformationWithAnalysis(_.join(right.underlying, joinExprs))
-
-  def join(right: Dataset[_], joinExprs: Column, joinType: String): TryAnalysis[DataFrame] =
-    transformationWithAnalysis(_.join(right.underlying, joinExprs, joinType))
 
   def joinWith[U](other: Dataset[U], condition: Column, joinType: String): TryAnalysis[Dataset[(T, U)]] =
     transformationWithAnalysis(_.joinWith[U](other.underlying, condition, joinType))
 
   def joinWith[U](other: Dataset[U], condition: Column): TryAnalysis[Dataset[(T, U)]] =
     transformationWithAnalysis(_.joinWith[U](other.underlying, condition))
+
+  def lateralJoin(right: Dataset[_], joinExprs: Column): TryAnalysis[DataFrame] =
+    transformationWithAnalysis(_.lateralJoin(right.underlying, joinExprs))
+
+  def lateralJoin(right: Dataset[_], joinExprs: Column, joinType: String): TryAnalysis[DataFrame] =
+    transformationWithAnalysis(_.lateralJoin(right.underlying, joinExprs, joinType))
 
   def observe(name: String, expr: Column, exprs: Column*): TryAnalysis[Dataset[T]] =
     transformationWithAnalysis(_.observe(name, expr, exprs: _*))
@@ -529,6 +550,9 @@ final case class Dataset[T](underlying: UnderlyingDataset[T]) { self =>
 
   def repartition(partitionExprs: Column*): TryAnalysis[Dataset[T]] =
     transformationWithAnalysis(_.repartition(partitionExprs: _*))
+
+  def repartitionById(numPartitions: Int, partitionIdExpr: Column): TryAnalysis[Dataset[T]] =
+    transformationWithAnalysis(_.repartitionById(numPartitions, partitionIdExpr))
 
   def repartitionByRange(numPartitions: Int, partitionExprs: Column*): TryAnalysis[Dataset[T]] =
     transformationWithAnalysis(_.repartitionByRange(numPartitions, partitionExprs: _*))
@@ -559,6 +583,9 @@ final case class Dataset[T](underlying: UnderlyingDataset[T]) { self =>
 
   def toDF(colNames: String*): TryAnalysis[DataFrame] =
     transformationWithAnalysis(_.toDF(colNames: _*))
+
+  def transpose(indexColumn: Column): TryAnalysis[DataFrame] =
+    transformationWithAnalysis(_.transpose(indexColumn))
 
   def unionByName(other: Dataset[T], allowMissingColumns: Boolean): TryAnalysis[Dataset[T]] =
     transformationWithAnalysis(_.unionByName(other.underlying, allowMissingColumns))
@@ -613,13 +640,21 @@ final case class Dataset[T](underlying: UnderlyingDataset[T]) { self =>
   // [[org.apache.spark.sql.Dataset.javaRDD]]
   // [[org.apache.spark.sql.Dataset.map]]
   // [[org.apache.spark.sql.Dataset.mapPartitions]]
-  // [[org.apache.spark.sql.Dataset.reduce]]
   // [[org.apache.spark.sql.Dataset.takeAsList]]
   // [[org.apache.spark.sql.Dataset.toJavaRDD]]
   // [[org.apache.spark.sql.Dataset.toString]]
 
   // ===============
 
+  def exists: Column =
+    get(_.exists())
+
+  def groupingSets(groupingSets: Seq[Seq[Column]], cols: Column*): RelationalGroupedDataset =
+    get(_.groupingSets(groupingSets, cols: _*))
+
   def metadataColumn(colName: String): Column =
     get(_.metadataColumn(colName))
+
+  def scalar: Column =
+    get(_.scalar())
 }

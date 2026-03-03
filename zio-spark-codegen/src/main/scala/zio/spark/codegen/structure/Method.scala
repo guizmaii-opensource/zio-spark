@@ -32,6 +32,8 @@ case class Method(
     else
       comments
         .leading(df)
+        .toSeq
+        .sortBy(_.pos.startLine)
         .mkString("  ", "\n  ", "")
         .replace("numPartitions = 1", "{{{ numPartitions = 1 }}}")
         .replace("(Scala-specific) ", "")

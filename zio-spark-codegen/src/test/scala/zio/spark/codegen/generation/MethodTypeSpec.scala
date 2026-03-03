@@ -56,7 +56,7 @@ object MethodTypeSpec extends ZIOSpecDefault {
 
   val dataFrameStatFunctionsMethodTypes: Spec[Any, Nothing] =
     suite("Check method types for DataFrameStatFunctions")(
-      testMethodTypeFor("countMinSketch")(GetWithAnalysis)
+      testMethodTypeFor("corr")(GetWithAnalysis)
     ).provide(planLayer(dataFrameStatFunctionsPlan))
 
   val dataFrameNaFunctionsMethodTypes: Spec[Any, Nothing] =
