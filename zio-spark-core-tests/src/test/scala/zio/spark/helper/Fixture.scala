@@ -8,14 +8,14 @@ import zio.spark.sql.implicits._
 import java.nio.file.Paths
 
 object Fixture {
-  import scala3encoders.given // scalafix:ok
+  import scala3encoders.given
 
   final case class Person(name: String, age: Long)
 
   def readCsv(path: String): SIO[DataFrame] = SparkSession.read.inferSchema.withHeader.withDelimiter(";").csv(path)
 
   def resourcesPath(fileName: String): String =
-    Paths.get(this.getClass.getClassLoader.getResource(fileName).toURI).toAbsolutePath.toString // scalafix:ok
+    Paths.get(this.getClass.getClassLoader.getResource(fileName).toURI).toAbsolutePath.toString
 
   val targetsPath: String = "zio-spark-core-tests/target/test"
 

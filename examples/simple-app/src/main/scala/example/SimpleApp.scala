@@ -1,13 +1,13 @@
 package example
 
 import org.apache.spark.sql.Row
+import scala3encoders.given
 
 import zio._
 import zio.spark.experimental
 import zio.spark.experimental.{Pipeline, ZIOSparkAppDefault}
 import zio.spark.parameter._
 import zio.spark.sql._
-import zio.spark.sql.implicits._
 
 object SimpleApp extends ZIOSparkAppDefault {
 
@@ -15,7 +15,7 @@ object SimpleApp extends ZIOSparkAppDefault {
 
   final case class Person(name: String, age: Int)
 
-  val filePath: String = "examples/simple-app/src/main/resources/data.csv"
+  val filePath: String = "src/main/resources/data.csv"
 
   def read: SIO[DataFrame] = SparkSession.read.schema[Person].withHeader.withDelimiter(";").csv(filePath)
 
