@@ -3,6 +3,7 @@ package zio.spark.experimental
 import org.apache.spark.SparkContextCompatibility.removeSparkListener
 import org.apache.spark.SparkFirehoseListener
 import org.apache.spark.scheduler.{SparkListenerEvent, SparkListenerJobEnd, SparkListenerJobStart}
+
 import zio.{durationInt, durationLong, Chunk, Ref, Scope, UIO, Unsafe, ZIO}
 import zio.spark.sql.{fromSpark, SIO, SparkSession}
 import zio.spark.sql.implicits._
