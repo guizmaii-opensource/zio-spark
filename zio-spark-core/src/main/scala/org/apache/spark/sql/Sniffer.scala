@@ -10,5 +10,7 @@ object Sniffer {
 
   /** Backdoor for showString private function. */
   def datasetShowString[T](dataset: Dataset[T], _numRows: Int, truncate: Int): String =
-    dataset.asInstanceOf[ClassicDataset[T]].showString(_numRows, truncate)
+    dataset match {
+      case classic: ClassicDataset[T @unchecked] => classic.showString(_numRows, truncate)
+    }
 }

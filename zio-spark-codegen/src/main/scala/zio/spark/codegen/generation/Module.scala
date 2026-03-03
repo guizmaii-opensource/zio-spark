@@ -14,7 +14,7 @@ package zio.spark.codegen.generation
  *   Optional secondary module containing abstract API definitions (e.g.
  *   spark-sql-api in Spark 4)
  */
-case class Module(
+final case class Module(
     name:          String,
     hierarchy:     String,
     sourceSubPath: Option[String] = None,
