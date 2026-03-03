@@ -14,7 +14,7 @@ import scala.util.Try
 
 object DatasetSpec extends ZIOSparkSpecDefault {
 
-  import scala3encoders.given // scalafix:ok
+  import scala3encoders.given
 
   import zio.spark.sql.TryAnalysis.syntax.throwAnalysisException
   import zio.spark.sql.implicits._
