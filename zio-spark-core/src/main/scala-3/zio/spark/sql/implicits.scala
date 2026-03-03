@@ -1,7 +1,6 @@
 package zio.spark.sql
 
 import org.apache.spark.sql.{ColumnName, Encoder}
-import scala3encoders.given
 
 import zio.*
 import zio.spark.rdd.*

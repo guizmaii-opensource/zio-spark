@@ -13,7 +13,7 @@ case object Generator {
   def generateAll(plans: Seq[Plan]): ZIO[Environment, Nothing, Seq[Output]] =
     for {
       outputs <- ZIO.foreachPar(plans)(generate)
-      _ <-
+      _       <-
         if (outputs.exists(_.isEmpty)) {
           ZIO.die(new Throwable("The ZIO Spark generation is canceled because we found errors."))
         } else {

@@ -3,7 +3,6 @@ package zio.spark.experimental
 import org.apache.spark.SparkContextCompatibility.removeSparkListener
 import org.apache.spark.SparkFirehoseListener
 import org.apache.spark.scheduler.{SparkListenerEvent, SparkListenerJobEnd, SparkListenerJobStart}
-import scala3encoders.given
 
 import zio.{durationInt, durationLong, Chunk, Ref, Scope, UIO, Unsafe, ZIO}
 import zio.spark.sql.{fromSpark, SIO, SparkSession}
@@ -17,9 +16,9 @@ object CancellableEffectSpec extends ZIOSparkSpecDefault {
 
   def listenSparkEvents[R, E, A](zio: ZIO[R, E, A]): ZIO[R with SparkSession, E, (Seq[SparkListenerEvent], A)] =
     for {
-      events  <- Ref.make[Chunk[SparkListenerEvent]](Chunk.empty)
-      runtime <- ZIO.runtime[R with SparkSession]
-      sc      <- fromSpark(_.sparkContext).orDie
+      events   <- Ref.make[Chunk[SparkListenerEvent]](Chunk.empty)
+      runtime  <- ZIO.runtime[R with SparkSession]
+      sc       <- fromSpark(_.sparkContext).orDie
       listener <-
         ZIO.succeed(new SparkFirehoseListener {
           override def onEvent(event: SparkListenerEvent): Unit =

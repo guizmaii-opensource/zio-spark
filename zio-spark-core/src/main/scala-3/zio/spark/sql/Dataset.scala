@@ -29,11 +29,13 @@ import zio._
 import zio.spark.rdd._
 import zio.spark.sql.streaming.DataStreamWriter
 
+import scala.annotation.nowarn
 import scala.jdk.CollectionConverters._
 import scala.reflect.runtime.universe.TypeTag
 
 import java.io.IOException
 
+@nowarn("cat=deprecation")
 final case class Dataset[T](underlying: UnderlyingDataset[T]) { self =>
   // scalafix:off
   implicit private def lift[U](x: UnderlyingDataset[U]): Dataset[U]                        = Dataset(x)

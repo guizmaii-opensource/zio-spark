@@ -35,7 +35,7 @@ object ZioSparkCodegenPlugin extends AutoPlugin {
 
         val scalaVersionLayer: ULayer[ScalaBinaryVersion] = ZLayer.succeed(version)
         val classpathLayer: ULayer[Classpath]             = ZLayer.succeed((Compile / dependencyClasspathAsJars).value)
-        val scalafmtLayer: ULayer[ScalafmtFormatter] =
+        val scalafmtLayer: ULayer[ScalafmtFormatter]      =
           ZLayer.succeed(
             ScalafmtFormatterLive(
               Scalafmt.create(this.getClass.getClassLoader),
