@@ -169,6 +169,9 @@ final case class SparkContext(underlying: UnderlyingSparkContext) { self =>
   def addJobTag(tag: => String)(implicit trace: Trace): Task[Unit] =
     action(_.addJobTag(tag))
 
+  def addJobTags(tags: => Set[String])(implicit trace: Trace): Task[Unit] =
+    action(_.addJobTags(tags))
+
   def archives(implicit trace: Trace): Task[Seq[String]] =
     action(_.archives)
 
@@ -194,8 +197,20 @@ final case class SparkContext(underlying: UnderlyingSparkContext) { self =>
   def cancelJob(jobId: => Int)(implicit trace: Trace): Task[Unit] =
     action(_.cancelJob(jobId))
 
+  def cancelJobGroup(groupId: => String, reason: => String)(implicit trace: Trace): Task[Unit] =
+    action(_.cancelJobGroup(groupId, reason))
+
   def cancelJobGroup(groupId: => String)(implicit trace: Trace): Task[Unit] =
     action(_.cancelJobGroup(groupId))
+
+  def cancelJobGroupAndFutureJobs(groupId: => String, reason: => String)(implicit trace: Trace): Task[Unit] =
+    action(_.cancelJobGroupAndFutureJobs(groupId, reason))
+
+  def cancelJobGroupAndFutureJobs(groupId: => String)(implicit trace: Trace): Task[Unit] =
+    action(_.cancelJobGroupAndFutureJobs(groupId))
+
+  def cancelJobsWithTag(tag: => String, reason: => String)(implicit trace: Trace): Task[Unit] =
+    action(_.cancelJobsWithTag(tag, reason))
 
   def cancelJobsWithTag(tag: => String)(implicit trace: Trace): Task[Unit] =
     action(_.cancelJobsWithTag(tag))
@@ -303,6 +318,9 @@ final case class SparkContext(underlying: UnderlyingSparkContext) { self =>
 
   def removeJobTag(tag: => String)(implicit trace: Trace): Task[Unit] =
     action(_.removeJobTag(tag))
+
+  def removeJobTags(tags: => Set[String])(implicit trace: Trace): Task[Unit] =
+    action(_.removeJobTags(tags))
 
   def resources(implicit trace: Trace): Task[Map[String, ResourceInformation]] =
     action(_.resources)

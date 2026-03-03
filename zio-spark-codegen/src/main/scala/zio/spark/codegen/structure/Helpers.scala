@@ -37,15 +37,23 @@ object Helpers {
   def collectFunctionsFromTemplate(template: TemplateWithComments): Seq[Defn.Def] =
     template.stats.collect { case d: Defn.Def if checkMods(d.mods) => d }
 
+  private def findClass(trees: List[Tree]): Option[Defn.Class] =
+    trees.collectFirst { case c: Defn.Class => c } orElse
+      trees.flatMap(t => findClass(t.children)).headOption
+
   def getTemplateFromSourceOverlay(source: Source): TemplateWithComments =
-    new TemplateWithComments(source.children.collectFirst { case c: Defn.Class => c.templ }.get, true)
+    new TemplateWithComments(
+      findClass(source.children)
+        .map(_.templ)
+        .getOrElse(throw new NoSuchElementException("No class found in overlay source")),
+      true
+    )
 
   def getTemplateFromSource(source: Source): TemplateWithComments =
     new TemplateWithComments(
-      source.children
-        .flatMap(_.children)
-        .collectFirst { case c: Defn.Class => c.templ }
-        .get,
+      findClass(source.children)
+        .map(_.templ)
+        .getOrElse(throw new NoSuchElementException("No class found in source")),
       false
     )
 

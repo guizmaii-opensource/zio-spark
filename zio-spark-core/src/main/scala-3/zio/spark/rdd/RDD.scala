@@ -217,7 +217,7 @@ final case class RDD[T](underlying: UnderlyingRDD[T]) { self =>
   def filter(f: T => Boolean): RDD[T] =
     transformation(_.filter(f))
 
-  def flatMap[U: ClassTag](f: T => TraversableOnce[U]): RDD[U] =
+  def flatMap[U: ClassTag](f: T => IterableOnce[U]): RDD[U] =
     transformation(_.flatMap[U](f))
 
   def glom: RDD[Seq[T]] =

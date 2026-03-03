@@ -9,7 +9,7 @@ addCommandAlias("fmt", "scalafmt")
 addCommandAlias("fmtCheck", "scalafmtCheckAll")
 addCommandAlias("check", "; fmtCheck;")
 
-val sparkVersion = "3.5.8"
+val sparkVersion = "4.1.1"
 val zioVersion   = "2.0.4"
 
 lazy val plugin =
@@ -23,8 +23,11 @@ lazy val plugin =
         "dev.zio"          %% "zio-test-sbt"     % zioVersion % Test,
         "org.scalameta"    %% "scalafmt-dynamic" % "3.4.3", // equals to sbt-scalafmt's scalfmt-dynamic version
         "org.scalameta"    %% "scalameta"        % "4.9.9",
-        "org.apache.spark" %% "spark-core"       % sparkVersion withSources (), // For tests only
-        "org.apache.spark" %% "spark-sql"        % sparkVersion withSources () // For tests only
+        // Spark 4 dropped Scala 2.12; use 2.13 artifacts explicitly (only needed for source JAR reading).
+        // Intransitive to avoid cross-version conflicts with Scala 2.12 plugin dependencies.
+        ("org.apache.spark" % "spark-core_2.13"    % sparkVersion withSources ()).intransitive(),
+        ("org.apache.spark" % "spark-sql_2.13"     % sparkVersion withSources ()).intransitive(),
+        ("org.apache.spark" % "spark-sql-api_2.13" % sparkVersion withSources ()).intransitive()
       ),
       testFrameworks := Seq(new TestFramework("zio.test.sbt.ZTestFramework"))
     )

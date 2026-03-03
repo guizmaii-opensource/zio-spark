@@ -197,15 +197,16 @@ lazy val examples =
       exampleZIOEcosystem
     )
 
-val sparkVersion = "3.5.4"
+val sparkVersion = "4.1.1"
 
 val magnoliaDependency: Seq[ModuleID] = Seq("com.softwaremill.magnolia1_3" %% "magnolia" % "1.3.18")
 
 val sparkLibraryDependencies: Seq[ModuleID] =
   Seq(
-    ("org.apache.spark" %% "spark-core" % sparkVersion % Provided withSources ()).cross(CrossVersion.for3Use2_13),
-    ("org.apache.spark" %% "spark-sql"  % sparkVersion % Provided withSources ()).cross(CrossVersion.for3Use2_13),
-    "io.github.vincenzobaz" %% "spark-scala3-encoders" % "0.3.2"
+    ("org.apache.spark" %% "spark-core"    % sparkVersion % Provided withSources ()).cross(CrossVersion.for3Use2_13),
+    ("org.apache.spark" %% "spark-sql"     % sparkVersion % Provided withSources ()).cross(CrossVersion.for3Use2_13),
+    ("org.apache.spark" %% "spark-sql-api" % sparkVersion % Provided withSources ()).cross(CrossVersion.for3Use2_13),
+    "io.github.vincenzobaz" %% "spark4-scala3-encoders" % "0.3.2"
   )
 
 /**

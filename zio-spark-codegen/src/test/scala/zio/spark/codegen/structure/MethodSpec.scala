@@ -66,7 +66,7 @@ object MethodSpec extends ZIOSpecDefault {
     ): Spec[SparkPlan, Nothing] = genTest2(methodName, arity, args)(genCodeFragment)
 
     suite("Check method generations for Dataset")(
-      checkGen("cogroup")("other.underlying")
+      checkGen("cogroup")("unpack(_.cogroup")
     )
   }.provide(planLayer(keyValueGroupedDatasetPlan))
 

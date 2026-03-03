@@ -57,23 +57,53 @@ case class SparkPlan(module: Module, template: Template) extends Plan { self =>
        |  //
        |${prefixAllLines(methods, "  // ")}""".stripMargin
 
+  // Spark 4 types that are not yet wrapped/imported by zio-spark
+  private val unsupportedTypes: Set[String] =
+    Set(
+      "StatefulProcessor",
+      "StatefulProcessorWithInitialState",
+      "TimeMode",
+      "ReadOnlySparkConf",
+      "MergeIntoWriter",
+      "TableArg",
+      "BloomFilter",
+      "CountMinSketch"
+    )
+
+  private def usesUnsupportedType(method: Method): Boolean = {
+    val allSignatures = method.anyParameters.map(_.signature) :+ method.returnType
+    allSignatures.exists(sig => unsupportedTypes.exists(sig.contains))
+  }
+
   def filterSparkFunctions(functions: Seq[Method]): Seq[Method] =
     functions
       .filterNot(_.name.contains("$"))
       .filterNot(_.name.contains("java.lang.Object"))
       .filterNot(_.name.contains("scala.Any"))
       .filterNot(_.name.contains("<init>"))
-      .filterNot(_.anyParameters.map(_.signature).exists(_.contains("ju.")))   // Java specific implementation
-      .filterNot(_.anyParameters.map(_.signature).exists(_.contains("jl.")))   // Java specific implementation
-      .filterNot(_.anyParameters.map(_.signature).exists(_.contains("java")))  // Java specific implementation
-      .filterNot(_.anyParameters.map(_.signature).exists(_.contains("Array"))) // Java specific implementation
+      .filterNot(_.anyParameters.map(_.rawSignature).exists(_.contains("ju.")))   // Java specific implementation
+      .filterNot(_.anyParameters.map(_.rawSignature).exists(_.contains("jl.")))   // Java specific implementation
+      .filterNot(_.anyParameters.map(_.rawSignature).exists(_.contains("java")))  // Java specific implementation
+      .filterNot(_.anyParameters.map(_.rawSignature).exists(_.contains("Array"))) // Java specific implementation
+      .filterNot(usesUnsupportedType)                                             // Spark 4 types not yet supported
 
   def getSparkMethods: ZIO[Logger & Classpath & ScalaBinaryVersion, CodegenError, Seq[Method]] =
     for {
       classpath    <- ZIO.service[Classpath]
       scalaVersion <- ZIO.service[ScalaBinaryVersion]
-      sparkSource  <- sourceFromClasspath(s"${module.path}/$name.scala", module.name, classpath)
-    } yield methodsFromSource(sparkSource, filterOverlay = false, module.hierarchy, name, scalaVersion)
+      sparkSource  <- sourceFromClasspath(s"${module.sourcePath}/$name.scala", module.name, classpath)
+      implMethods = methodsFromSource(sparkSource, filterOverlay = false, module.hierarchy, name, scalaVersion)
+      apiMethods <-
+        module.apiModule match {
+          case Some((apiModuleName, apiPath)) =>
+            sourceFromClasspath(s"$apiPath/$name.scala", apiModuleName, classpath)
+              .map(src => methodsFromSource(src, filterOverlay = false, module.hierarchy, name, scalaVersion))
+              .catchAll(_ => ZIO.succeed(Seq.empty))
+          case None => ZIO.succeed(Seq.empty)
+        }
+      implMethodKeys = implMethods.map(m => (m.name, m.anyParameters.size)).toSet
+      mergedMethods  = implMethods ++ apiMethods.filterNot(m => implMethodKeys.contains((m.name, m.anyParameters.size)))
+    } yield mergedMethods
 
   def generateSparkGroupedMethods: ZIO[Environment, CodegenError, Map[MethodType, Seq[Method]]] =
     for {
