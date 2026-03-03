@@ -1,10 +1,10 @@
 package zio.spark.sql.streaming
 
-import scala3encoders.given // scalafix:ok
+import scala3encoders.given
 
+import zio.Scope
 import zio.durationInt
 import zio.spark.sql._
-import zio.spark.sql.implicits._
 import zio.spark.test._
 import zio.test._
 import zio.test.Assertion.{containsString, equalTo}
@@ -27,7 +27,7 @@ object DataStreamWriterSpec extends ZIOSparkSpecDefault {
       } yield assert(writerWithOptions.options)(equalTo(options))
     }
 
-  override def spec =
+  override def spec: Spec[Environment & (TestEnvironment & Scope), Any] =
     suite("DataStreamWriter configurations")(
       test("DataStreamWriter should apply options correctly") {
         val options = Map("a" -> "x", "b" -> "y")
