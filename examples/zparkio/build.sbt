@@ -9,4 +9,4 @@ libraryDependencies ++= Seq(
   ("org.apache.spark" %% "spark-sql"  % sparkVersion % Provided).cross(CrossVersion.for3Use2_13),
 )
 
-libraryDependencies += "dev.zio" %% "zio-logging" % "2.5.1"
+libraryDependencies += "dev.zio" %% "zio-logging" % "2.5.3"
