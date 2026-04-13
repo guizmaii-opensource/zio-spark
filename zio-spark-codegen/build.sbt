@@ -18,11 +18,11 @@ lazy val plugin =
     .settings(
       name := "zio-spark-codegen",
       libraryDependencies ++= Seq(
-        "dev.zio"          %% "zio"              % zioVersion,
-        "dev.zio"          %% "zio-test"         % zioVersion % Test,
-        "dev.zio"          %% "zio-test-sbt"     % zioVersion % Test,
-        "org.scalameta"    %% "scalafmt-dynamic" % "3.4.3", // equals to sbt-scalafmt's scalfmt-dynamic version
-        "org.scalameta"    %% "scalameta"        % "4.9.9",
+        "dev.zio"       %% "zio"              % zioVersion,
+        "dev.zio"       %% "zio-test"         % zioVersion % Test,
+        "dev.zio"       %% "zio-test-sbt"     % zioVersion % Test,
+        "org.scalameta" %% "scalafmt-dynamic" % "3.4.3", // equals to sbt-scalafmt's scalfmt-dynamic version
+        "org.scalameta" %% "scalameta"        % "4.9.9",
         // Spark 4 dropped Scala 2.12; use 2.13 artifacts explicitly (only needed for source JAR reading).
         // Intransitive to avoid cross-version conflicts with Scala 2.12 plugin dependencies.
         ("org.apache.spark" % "spark-core_2.13"    % sparkVersion withSources ()).intransitive(),
